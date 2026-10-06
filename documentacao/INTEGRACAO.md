@@ -2,7 +2,7 @@
 
 ## Servidor de testes do professor
 
-O arquivo `simulador-professor.cjs` é uma cópia integral do `mock_server_smart40.js`, renomeada para `.cjs` para preservar CommonJS dentro deste projeto ES Modules.
+O arquivo `simulador-professor.cjs` deriva do `mock_server_smart40.js`, renomeado para `.cjs` para preservar CommonJS dentro deste projeto ES Modules. Mantém o contrato e a lógica do professor, com ajustes para hospedagem: `ORIGENS_PERMITIDAS` aceita origens adicionais separadas por vírgula, a comparação de origem é exata, a escuta usa `0.0.0.0` e o token não aparece nos logs. Veja [Render](RENDER.md).
 
 Para executá-lo em outro terminal:
 

@@ -4,6 +4,7 @@
   "version": "1.1.0",
   "type": "module",
   "scripts": {
+    "start": "node documentacao/simulador-professor.cjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 8081 --host 0.0.0.0",

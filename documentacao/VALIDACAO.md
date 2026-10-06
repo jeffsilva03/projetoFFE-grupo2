@@ -2,7 +2,7 @@
 
 - Verificação TypeScript e builds independente e ESM concluídos.
 - Treze testes automatizados de lógica/protocolo passaram, cobrindo segurança local, validação de telemetria, campos obrigatórios, modos, enumerações, URL/token, comandos suportados e tradução de trava/estado.
-- Simulador original do professor executado sem modificações.
+- Na validação inicial, o simulador original do professor foi executado sem modificações. A adaptação posterior para Render foi verificada com HTTP 200, origem adicional autorizada, rejeição de origem semelhante não autorizada (403), token inválido (401), telemetria e comandos STOP/START.
 - Os quatro comandos START, STOP, RESET e EMERGENCY_STOP foram recebidos pelo servidor e seus estados foram observados no navegador.
 - Servidor pausado antes de STOP: a tela permaneceu no estado recebido anteriormente até a nova telemetria, sem mudança otimista.
 - STOP após emergência alterou o estado bruto para PRONTA, mantendo a trava: a interface continuou mostrando Emergência.

@@ -23,6 +23,7 @@ const TOKENS_VALIDOS = new Set([
 ]);
 
 const ORIGENS_PERMITIDAS = [
+  ...(process.env.ORIGENS_PERMITIDAS || '').split(',').map(origem => origem.trim()).filter(Boolean),
   'http://localhost:9000',
   'http://localhost:8081',
   'http://localhost:8082',
@@ -92,7 +93,7 @@ server.on('upgrade', (request, socket, head) => {
 
   console.log(`\n[HANDSHAKE] Tentativa de conexão recebida.`);
   console.log(` -> Origem: ${origem || 'Desconhecida/Local'}`);
-  console.log(` -> Token fornecido: ${token || 'Nenhum'}`);
+  console.log(` -> Token fornecido: ${token ? 'Sim' : 'Não'}`);
 
   // 1. Validar Token de Autenticação
   if (!token || !TOKENS_VALIDOS.has(token)) {
@@ -103,7 +104,7 @@ server.on('upgrade', (request, socket, head) => {
   }
 
   // 2. Validar Origem (se presente no cabeçalho)
-  if (origem && !ORIGENS_PERMITIDAS.some(o => origem.startsWith(o)) && !origem.includes('localhost') && !origem.includes('127.0.0.1')) {
+  if (origem && !ORIGENS_PERMITIDAS.includes(origem)) {
     console.log(` ❌ RECUSADO: Origem não permitida (${origem})`);
     socket.write('HTTP/1.1 403 Forbidden\r\nContent-Type: text/plain\r\n\r\nOrigem nao autorizada.\r\n');
     socket.destroy();
@@ -268,7 +269,7 @@ setInterval(() => {
 // ==========================================
 // INICIALIZAÇÃO
 // ==========================================
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ================================================================
 🚀 SIMULADOR WEBSOCKET SMART 4.0 (COM AUTENTICAÇÃO)
@@ -281,7 +282,7 @@ Tokens Autorizados:
  - smart40-token-2026 (Padrão)
  - aluno-token-grupo1 ate aluno-token-grupo5
 
-Origens Permitidas: Localhost e Vercel
+Origens Permitidas: ${ORIGENS_PERMITIDAS.join(', ')}
 ================================================================
   `);
 });

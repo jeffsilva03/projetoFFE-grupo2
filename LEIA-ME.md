@@ -114,7 +114,7 @@ testes/
   simulacao.test.ts
   protocolo.test.ts
 documentacao/
-  simulador-professor.cjs    Servidor original, sem alterações
+  simulador-professor.cjs    Mock do professor adaptado para hospedagem
   INTEGRACAO.md
   VALIDACAO.md
 versao-pronta/              Aplicação compilada
@@ -157,4 +157,4 @@ O servidor do mock deve continuar aberto em outro terminal se quiser conectar.
 
 A integração com o **mock** está implementada. Não há conexão com PLC ou planta física. O limite de pressão de 4,5 bar usado para indicação de falha é um critério desta demonstração e deve ser confirmado com o professor. A integração do App Shell real ainda depende do Grupo 1.
 
-A fonte Inter está incluída e sua licença original está em `documentacao/LICENCA-FONTE.txt`. As capturas `previa-computador.png` e `previa-celular.png` mostram a versão conectada. O tema CSS e o simulador originais do professor foram preservados.
+A fonte Inter está incluída e sua licença original está em `documentacao/LICENCA-FONTE.txt`. As capturas `previa-computador.png` e `previa-celular.png` mostram a versão conectada. O tema CSS do professor foi preservado. O simulador mantém o contrato e a lógica do professor, com ajustes para hospedagem: origens adicionais por variável de ambiente, comparação exata de origens, escuta em `0.0.0.0` e token omitido dos logs.
