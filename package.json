@@ -1,0 +1,31 @@
+{
+  "name": "ihm-smart40-grupo2",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 8081 --host 0.0.0.0",
+    "verificar": "tsc --noEmit",
+    "testar": "node --import tsx --test testes/*.test.ts",
+    "integracao": "tsc --noEmit && vite build --mode integracao",
+    "simulador": "node documentacao/simulador-professor.cjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

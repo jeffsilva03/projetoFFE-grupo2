@@ -1,0 +1,5 @@
+node_modules/
+dist/
+dist-integracao/
+.env.local
+*.log
