@@ -32,6 +32,21 @@ A trava tem prioridade na tradução do estado: PRONTA com trava ativa é exibid
 
 O servidor não envia ACK nem ID de comando. A interface só observa a condição esperada na telemetria e apresenta uma mensagem de timeout se ela não aparecer em 2,5 segundos. Isso não permite atribuir causalidade a um comando quando há múltiplos clientes.
 
+## Separação entre transporte e estado da IHM
+
+A aplicação agora separa explicitamente duas responsabilidades:
+
+- `protocoloSimulador.ts`: valida o JSON e conhece somente o contrato do mock WebSocket do professor;
+- `normalizacaoMaquina.ts`: converte a telemetria recebida para `EstadoMaquina`, que é o modelo consumido pelos componentes visuais.
+
+Assim, `PainelIhm`, `Botoeira`, `Movimentacao`, `ParametrosProducao` e `Diagnostico` não precisam conhecer DB Siemens, Node-RED ou o formato futuro do App Shell.
+
+Quando o Grupo 1 fechar o contrato, deve ser criado um segundo normalizador/adaptador para os eventos do App Shell. O mock atual continua funcionando sem alteração do seu contrato.
+
+O arquivo `src/tipos/contratoSmart40.ts` registra somente a proposta v0.1 do Runbook (`machine.telemetry`, `command.requested`, `command.ack` e `connection.state`). Ele é deliberadamente provisório e não está conectado ao runtime até o Grupo 1 confirmar nomes e comportamento.
+
+A relação entre sinais encontrados no Drive, significado provável e pendências está documentada em [MATRIZ-SINAIS-PLANTA.md](MATRIZ-SINAIS-PLANTA.md).
+
 ## App Shell / Single-SPA
 
 Há um ponto de entrada com as funções de ciclo de vida `bootstrap`, `mount` e `unmount`. Gere os arquivos com:
@@ -64,4 +79,14 @@ Nesta versão, cada instância da IHM gerencia sua própria conexão. Antes de i
 
 ## Planta física
 
-Ainda é necessário confirmar qual estação e DB correspondem ao painel atribuído ao grupo, como o backend receberá os comandos e qual contrato de telemetria será utilizado. Nenhum endereço ou mapeamento de PLC foi implementado nesta entrega.
+A auditoria dos arquivos da Planta N2 identificou sinais de referência em DB9, DB101, DB102 e DB103 e confirmou, pelos diagramas elétricos, a existência física de emergência frontal, comutador, botão verde e botão vermelho nas estações. Esses achados estão registrados na matriz de sinais.
+
+Eles **não são binding de runtime**. Ainda é necessário confirmar com professor/Grupo 1:
+
+- se a IHM do Grupo 2 representa uma estação ou a máquina agregada;
+- a semântica oficial de botão verde/vermelho;
+- o tratamento de RESET e E-STOP;
+- quais campos compõem a telemetria comum;
+- transporte, autenticação, autorização e ACKs do gateway.
+
+Nenhum endereço PLC é usado pelo navegador e nenhuma escrita S7 foi implementada.
