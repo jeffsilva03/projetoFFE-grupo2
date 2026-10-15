@@ -1,16 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { acaoSuportada, condicaoAposComando, estadoDaTelemetria, lerTelemetria, maquinaDaTelemetria, montarUrlSimulador } from '../src/servicos/protocoloSimulador';
+import { acaoSuportada, condicaoAposComando, lerTelemetria, montarUrlSimulador } from '../src/servicos/protocoloSimulador';
+import { estadoDaTelemetriaSimulador, normalizarTelemetriaSimulador } from '../src/servicos/normalizacaoMaquina';
 const dados = { timestamp: '2026-09-30T23:00:00.000Z', estadoGlobal: 'EM_EXECUCAO', modoOperacao: 'AUTOMATICO', velocidadeEsteiraAtual: 65, estacaoIhm: { travaSegurancaAtiva: false, pressaoPneumaticaBar: 6.2 }, metricasExpedicao: { pecasProcessadasTotal: 142 } };
 test('interpreta o contrato real do mock sem confundir contador global com lote local', () => {
   const telemetria = lerTelemetria(JSON.stringify(dados));
   assert.equal(telemetria.totalPecas, 142);
-  assert.equal(estadoDaTelemetria(telemetria), 'OPERANDO');
-  assert.equal(maquinaDaTelemetria(telemetria, 'recebido').pressao, 6.2);
+  assert.equal(estadoDaTelemetriaSimulador(telemetria), 'OPERANDO');
+  assert.equal(normalizarTelemetriaSimulador(telemetria, 'recebido').pressao, 6.2);
 });
 test('trava continua em emergência mesmo se STOP alterar estadoGlobal para PRONTA', () => {
   const telemetria = lerTelemetria(JSON.stringify({ ...dados, estadoGlobal: 'PRONTA', velocidadeEsteiraAtual: 0, estacaoIhm: { ...dados.estacaoIhm, travaSegurancaAtiva: true } }));
-  assert.equal(estadoDaTelemetria(telemetria), 'EMERGENCIA');
+  assert.equal(estadoDaTelemetriaSimulador(telemetria), 'EMERGENCIA');
   assert.equal(condicaoAposComando('PARAR', telemetria), true);
   assert.equal(condicaoAposComando('REARMAR', telemetria), false);
 });
@@ -20,7 +21,7 @@ test('JSON ou telemetria incompleta não podem virar um estado válido', () => {
 test('suporta manutenção e exibe ausência de contador como nulo', () => {
   const telemetria = lerTelemetria(JSON.stringify({ ...dados, modoOperacao: 'MANUTENCAO', metricasExpedicao: {} }));
   assert.equal(telemetria.totalPecas, null);
-  assert.equal(maquinaDaTelemetria(telemetria, '').modo, 'MANUTENCAO');
+  assert.equal(normalizarTelemetriaSimulador(telemetria, '').modo, 'MANUTENCAO');
 });
 test('campos de estado e modo não aceitam arrays que podem ser convertidos em texto', () => {
   assert.throws(() => lerTelemetria(JSON.stringify({ ...dados, estadoGlobal: ['PRONTA'] })));
