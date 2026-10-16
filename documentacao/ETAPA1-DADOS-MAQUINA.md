@@ -1,5 +1,7 @@
 # Etapa 1 — Dados disponíveis da máquina para o Grupo 2
 
+> **Atualização de 16/10/2026:** esta análise inicial de Node-RED e diagramas foi aprofundada com o **manual do fabricante** e os **arquivos internos do TIA Portal**. Consulte [INVESTIGACAO-LACUNAS-G2.md](INVESTIGACAO-LACUNAS-G2.md) como parecer **mais atual sobre START/STOP, RESET, MANUTENÇÃO, alarmes e tempo de ciclo**.
+
 ## Objetivo
 
 Determinar, com base nos arquivos da Planta N2, quais sinais podem alimentar a IHM do Grupo 2 antes de projetar o adaptador de aquisição.
@@ -126,7 +128,7 @@ Para o G2, esses sinais são **candidatos de aquisição que precisam ser observ
 
 ## 5. O que NÃO foi encontrado como sinal direto
 
-Nos arquivos auditados até esta etapa não foi encontrada uma tag única confirmada equivalente a:
+**No contrato exposto pelo Node-RED analisado nesta etapa** não foi encontrada uma tag única confirmada equivalente a:
 
 - `estadoGlobal` do mock;
 - `modoOperacao = MANUTENCAO`;
@@ -137,7 +139,7 @@ Nos arquivos auditados até esta etapa não foi encontrada uma tag única confir
 - RESET lógico de software claramente exposto para escrita;
 - E-STOP de software homologado.
 
-Esses campos não devem ser inventados. O estado global deverá ser derivado de sinais aprovados ou fornecido por uma camada intermediária.
+**Atenção:** a investigação complementar identificou referências internas do TIA Portal a `StatusProcesso`, estado de manutenção, resets e alarmes, mas **ainda sem mapeamento de saída aprovado para G2**. Os campos não devem ser inventados. O estado global deverá ser derivado de sinais aprovados ou fornecido por uma camada intermediária. O manual do fabricante confirma Start/Stop físicos em Estoque/Processo/Expedição; isso não autoriza escrita remota.
 
 ## 6. Descoberta crítica sobre a comunicação
 
