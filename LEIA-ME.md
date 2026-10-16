@@ -158,7 +158,7 @@ O servidor do mock deve continuar aberto em outro terminal se quiser conectar.
 
 ## Preparação para a integração da turma
 
-A auditoria das fontes da Planta N2 foi registrada em `documentacao/MATRIZ-SINAIS-PLANTA.md`. O código separa o protocolo do mock da normalização para o modelo interno da IHM, de forma que o futuro adaptador do App Shell possa ser adicionado sem acoplar os componentes visuais ao PLC ou ao Node-RED.
+A auditoria das fontes da Planta N2 foi registrada em `documentacao/MATRIZ-SINAIS-PLANTA.md` e aprofundada com o manual do fabricante/TIA Portal em `documentacao/INVESTIGACAO-LACUNAS-G2.md`. A interpretação atual é restrita ao escopo do Grupo 2 (IHM e botoeira). O código separa o protocolo do mock da normalização para o modelo interno da IHM, de forma que o futuro adaptador do App Shell possa ser adicionado sem acoplar os componentes visuais ao PLC ou ao Node-RED.
 
 O contrato `src/tipos/contratoSmart40.ts` é uma proposta provisória baseada no Runbook e ainda não é usado em runtime. A versão final depende do Grupo 1.
 
