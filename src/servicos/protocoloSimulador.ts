@@ -1,6 +1,5 @@
-import type { AcaoMaquina, EstadoMaquina, EstadoOperacional } from '../tipos/maquina';
+import type { AcaoMaquina } from '../tipos/maquina';
 import type { TelemetriaSimulador } from '../tipos/conexao';
-import { estadoInicial } from '../estado/simulacao';
 export const acoesDoMock = { INICIAR: 'START', PARAR: 'STOP', REARMAR: 'RESET', EMERGENCIA: 'EMERGENCY_STOP' } as const;
 export type AcaoRemota = keyof typeof acoesDoMock;
 export function acaoSuportada(acao: AcaoMaquina): acao is AcaoMaquina & { tipo: AcaoRemota } { return Object.hasOwn(acoesDoMock, acao.tipo); }
@@ -16,14 +15,6 @@ export function lerTelemetria(mensagem: string): TelemetriaSimulador {
   let totalPecas: number | null = null;
   if (objeto(dados.metricasExpedicao)) { const total = dados.metricasExpedicao.pecasProcessadasTotal; if (typeof total === 'number' && Number.isSafeInteger(total) && total >= 0) totalPecas = total; }
   return { timestamp: dados.timestamp, estadoGlobal: dados.estadoGlobal as TelemetriaSimulador['estadoGlobal'], modoOperacao: dados.modoOperacao as TelemetriaSimulador['modoOperacao'], velocidadeEsteiraAtual: dados.velocidadeEsteiraAtual, estacaoIhm: { travaSegurancaAtiva: ihm.travaSegurancaAtiva, pressaoPneumaticaBar: ihm.pressaoPneumaticaBar }, totalPecas };
-}
-export function estadoDaTelemetria(telemetria: TelemetriaSimulador): EstadoOperacional {
-  if (telemetria.estadoGlobal === 'PARADA_EMERGENCIA' || telemetria.estacaoIhm.travaSegurancaAtiva) return 'EMERGENCIA';
-  if (telemetria.estacaoIhm.pressaoPneumaticaBar < 4.5) return 'FALHA_SEGURANCA';
-  return telemetria.estadoGlobal === 'EM_EXECUCAO' ? 'OPERANDO' : 'PARADA';
-}
-export function maquinaDaTelemetria(telemetria: TelemetriaSimulador, mensagem: string): EstadoMaquina {
-  return { ...estadoInicial, estado: estadoDaTelemetria(telemetria), modo: telemetria.modoOperacao, emergenciaTravada: telemetria.estacaoIhm.travaSegurancaAtiva, segurancaRestabelecida: !telemetria.estacaoIhm.travaSegurancaAtiva, pressao: telemetria.estacaoIhm.pressaoPneumaticaBar, produzidas: telemetria.totalPecas ?? 0, mensagem };
 }
 export function condicaoAposComando(acao: AcaoRemota, dados: TelemetriaSimulador): boolean {
   switch (acao) {

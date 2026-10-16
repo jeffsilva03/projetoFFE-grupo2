@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { estadoInicial, possuiBloqueio, reduzirMaquina } from './simulacao';
-import { acaoSuportada, acoesDoMock, condicaoAposComando, maquinaDaTelemetria, montarUrlSimulador, lerTelemetria, type AcaoRemota } from '../servicos/protocoloSimulador';
+import { acaoSuportada, acoesDoMock, condicaoAposComando, montarUrlSimulador, lerTelemetria, type AcaoRemota } from '../servicos/protocoloSimulador';
+import { normalizarTelemetriaSimulador } from '../servicos/normalizacaoMaquina';
 import type { AcaoMaquina } from '../tipos/maquina';
 import type { EstadoConexao, FonteDados, TelemetriaSimulador } from '../tipos/conexao';
 
@@ -80,7 +81,7 @@ export function usarMaquina() {
     if (!acaoSuportada(acao)) { alterarMensagemRemota('Este controle não é suportado pelo mock. Use a simulação local para testá-lo.'); return; }
     const socket = socketAtual.current, dados = dadosAtuais.current;
     if (!socket || socket.readyState !== WebSocket.OPEN || estadoAtual.current !== 'CONECTADO' || !dados || Date.now() - ultimaRecepcao.current > 3000) { alterarMensagemRemota('Comando não enviado: conexão ou telemetria indisponível. Reconecte o simulador.'); return; }
-    if (acao.tipo === 'INICIAR' && possuiBloqueio(maquinaDaTelemetria(dados, ''))) { alterarMensagemRemota('Partida bloqueada pela segurança. Pressione REARMAR no mock.'); return; }
+    if (acao.tipo === 'INICIAR' && possuiBloqueio(normalizarTelemetriaSimulador(dados, ''))) { alterarMensagemRemota('Partida bloqueada pela segurança. Pressione REARMAR no mock.'); return; }
     if (acao.tipo === 'REARMAR' && dados.estadoGlobal === 'EM_EXECUCAO') { alterarMensagemRemota('Pare a máquina antes de rearmar o simulador.'); return; }
     if (pendente.current && acao.tipo !== 'EMERGENCIA' && acao.tipo !== 'PARAR') { alterarMensagemRemota('Aguarde a telemetria do comando anterior.'); return; }
     limparPendente();
@@ -101,6 +102,6 @@ export function usarMaquina() {
     return () => { window.clearInterval(temporizador); window.removeEventListener('blur', parar); document.removeEventListener('visibilitychange', aoOcultar); encerrarSocket(); };
   }, [encerrarSocket, definirEstado, limparPendente]);
   const fonte: FonteDados = { remota, disponivel: !remota || estadoConexao === 'CONECTADO', estadoConexao, telemetria, comandoPendente };
-  const maquina = remota ? telemetria ? maquinaDaTelemetria(telemetria, mensagemRemota) : { ...estadoInicial, mensagem: mensagemRemota } : maquinaLocal;
+  const maquina = remota ? telemetria ? normalizarTelemetriaSimulador(telemetria, mensagemRemota) : { ...estadoInicial, mensagem: mensagemRemota } : maquinaLocal;
   return { maquina, enviar, fonte, conectar, desconectar, usarLocal };
 }

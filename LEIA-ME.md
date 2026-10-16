@@ -100,10 +100,12 @@ src/
     usarMaquina.ts           Alternância de fonte e WebSocket
     simulacao.ts             Regras da simulação local
   servicos/
-    protocoloSimulador.ts    Validação e tradução do contrato
+    protocoloSimulador.ts    Validação do contrato WebSocket do mock
+    normalizacaoMaquina.ts   Tradução da fonte externa para EstadoMaquina
   tipos/
     maquina.ts
     conexao.ts
+    contratoSmart40.ts       Contrato provisório v0.1 para o App Shell
     ambiente.d.ts
   estilos/
     tema-professor.css
@@ -116,6 +118,7 @@ testes/
 documentacao/
   simulador-professor.cjs    Mock do professor adaptado para hospedagem
   INTEGRACAO.md
+  MATRIZ-SINAIS-PLANTA.md   Inventário técnico e pendências da Planta N2
   VALIDACAO.md
 versao-pronta/              Aplicação compilada
 ```
@@ -152,6 +155,12 @@ O servidor do mock deve continuar aberto em outro terminal se quiser conectar.
 | Sem telemetria | Confira o terminal do mock. Após restabelecer o servidor, reconecte. |
 | Página HTTPS com mock ws:// local | Execute pelo endereço HTTP local. Em hospedagem HTTPS, a conexão precisa ser wss:// e a origem deve ser permitida no servidor. |
 | Botões de modo e setas desabilitados | Limitação do contrato do mock; use a simulação local. |
+
+## Preparação para a integração da turma
+
+A auditoria das fontes da Planta N2 foi registrada em `documentacao/MATRIZ-SINAIS-PLANTA.md` e aprofundada com o manual do fabricante/TIA Portal em `documentacao/INVESTIGACAO-LACUNAS-G2.md`. A interpretação atual é restrita ao escopo do Grupo 2 (IHM e botoeira). O código separa o protocolo do mock da normalização para o modelo interno da IHM, de forma que o futuro adaptador do App Shell possa ser adicionado sem acoplar os componentes visuais ao PLC ou ao Node-RED.
+
+O contrato `src/tipos/contratoSmart40.ts` é uma proposta provisória baseada no Runbook e ainda não é usado em runtime. A versão final depende do Grupo 1.
 
 ## Escopo
 
