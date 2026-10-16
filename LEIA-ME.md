@@ -1,5 +1,23 @@
 # SMART 4.0 — Grupo 2: IHM Siemens / Botões — versão 1.1
 
+> **Sprint 2 (branch de desenvolvimento):** o modo **Sprint 2 · Leitura de sinais** recebe apenas dados de teste baseados nas tags encontradas na Planta N2. Nenhuma comunicação real com a máquina. Consulte [ETAPA2-LEITURA-G2.md](documentacao/ETAPA2-LEITURA-G2.md).
+
+## Como testar a Etapa 2 (somente leitura)
+
+Abra dois terminais na pasta do projeto, após `npm.cmd ci`:
+
+```powershell
+npm.cmd run leitura-g2
+```
+
+Em outro terminal:
+
+```powershell
+npm.cmd run dev
+```
+
+Acesse `http://localhost:8081`, selecione **Sprint 2 · Leitura de sinais**, escolha estação e situação de teste e clique em **Conectar leitura G2**. Os botões verdes/vermelhos que aparecem nessa nova tela **não são clicáveis nem enviam comandos**, apenas mostram estados recebidos. Para testar a queda de dados, pare o servidor de leitura; a tela marcará as informações como indisponíveis. A simulação da Sprint 1 continua disponível, sem alterações de protocolo.
+
 Para publicar a interface online, siga [Hospedar no Render](documentacao/RENDER.md).
 
 Frontend em **React + TypeScript + Vite**, com conexão autenticada ao simulador WebSocket fornecido pelo professor. Mantém a interface Siemens, a botoeira e a opção de simulação local.

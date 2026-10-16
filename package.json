@@ -11,7 +11,8 @@
     "verificar": "tsc --noEmit",
     "testar": "node --import tsx --test testes/*.test.ts",
     "integracao": "tsc --noEmit && vite build --mode integracao",
-    "simulador": "node documentacao/simulador-professor.cjs"
+    "simulador": "node documentacao/simulador-professor.cjs",
+    "leitura-g2": "node documentacao/simulador-leitura-g2.cjs"
   },
   "dependencies": {
     "react": "^19.2.0",
