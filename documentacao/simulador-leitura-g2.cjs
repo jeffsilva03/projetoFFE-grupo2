@@ -73,5 +73,7 @@ servidor.on('connection', (socket, requisicao) => {
   socket.on('close', () => clearInterval(intervalo));
   socket.on('error', () => clearInterval(intervalo));
 });
-console.log(`[G2] Fonte de teste SOMENTE LEITURA: ws://localhost:${porta}`);
-console.log('[G2] Nenhuma comunicação com a Planta N2 é realizada.');
+servidor.on('listening', () => {
+  console.log(`[G2] Fonte de teste SOMENTE LEITURA: ws://localhost:${porta}`);
+  console.log('[G2] Nenhuma comunicação com a Planta N2 é realizada.');
+});
