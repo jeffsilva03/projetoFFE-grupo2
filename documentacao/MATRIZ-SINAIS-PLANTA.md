@@ -1,5 +1,7 @@
 # Matriz de sinais da Planta N2 — Grupo 2
 
+> **Parecer G2 atualizado:** consultar [INVESTIGACAO-LACUNAS-G2.md](INVESTIGACAO-LACUNAS-G2.md). O manual do fabricante confirma START/STOP físicos em Estoque, Processo e Expedição. As referências de RESET lógico, manutenção e alarmes foram encontradas internamente no TIA Portal, mas não na interface S7 exposta pelo Node-RED.
+
 > Documento de trabalho para preparar a integração futura da IHM web com a Planta N2.
 > Nesta Sprint, os sinais abaixo são **referência de engenharia**. Eles não autorizam conexão direta do navegador ao PLC nem escrita em S7.
 
@@ -83,7 +85,7 @@ A aplicação atualmente recebe do mock:
 | Campo do mock | Situação diante das fontes da planta |
 |---|---|
 | `estadoGlobal` | não foi encontrado como uma tag única; deve ser derivado/normalizado pelo gateway ou contrato comum |
-| `modoOperacao` | há evidência física/lógica de Manual/Automático; `MANUTENCAO` ainda precisa de confirmação |
+| `modoOperacao` | há evidência física/lógica de Manual/Automático; `MANUTENCAO` existe como descrição de estado interno no TIA Portal de Processo, mas não foi confirmada tag externa G2 |
 | `estacaoIhm.travaSegurancaAtiva` | há sinais de segurança/emergência, mas o mapeamento 1:1 ainda precisa de validação |
 | `estacaoIhm.pressaoPneumaticaBar` | valor numérico equivalente não foi confirmado nos sinais auditados |
 | `velocidadeEsteiraAtual` | velocidade percentual equivalente não foi confirmada nos sinais auditados |
@@ -95,7 +97,7 @@ O mock aceita `START`, `STOP`, `RESET` e `EMERGENCY_STOP`. Esses nomes são cont
 
 Para a planta física:
 
-- botão verde/vermelho: existem como sinais reais, porém o vínculo semântico definitivo com START/STOP deve ser validado;
+- botão verde/vermelho: manual do fabricante confirma Start/Stop físicos em Estoque, Processo e Expedição; a ligação PLC → DB correspondente ainda requer teste, e isso não autoriza comandos de escrita remotos;
 - RESET: aparece no circuito de segurança dos diagramas e não deve ser convertido automaticamente em escrita de um bit de DB;
 - E-STOP: é função de segurança física. Um botão web não é parada de emergência funcional;
 - nenhum endereço de escrita PLC está aprovado para o navegador.
