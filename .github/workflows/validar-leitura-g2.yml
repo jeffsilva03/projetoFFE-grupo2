@@ -23,5 +23,6 @@ jobs:
       - run: npm ci
       - run: npm run verificar
       - run: npm run testar
+      - run: node testes/leituraG2-smoke.cjs
       - run: npm run build
       - run: npm run integracao
