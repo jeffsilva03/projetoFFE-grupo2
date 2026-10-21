@@ -18,6 +18,18 @@ npm.cmd run dev
 
 Acesse `http://localhost:8081`, selecione **Sprint 2 · Leitura de sinais**, escolha estação e situação de teste e clique em **Conectar leitura G2**. Os botões verdes/vermelhos que aparecem nessa nova tela **não são clicáveis nem enviam comandos**, apenas mostram estados recebidos. Para testar a queda de dados, pare o servidor de leitura; a tela marcará as informações como indisponíveis. A simulação da Sprint 1 continua disponível, sem alterações de protocolo.
 
+## Sprint 2 — Ponte Node-RED com as quatro estações
+
+Esta branch possui a nova opção **Sprint 2 · Ponte Node-RED**, que acompanha Estoque, Processo, Montagem e Expedição ao mesmo tempo.
+
+Para ver funcionando **sem acessar a máquina**, execute `npm.cmd run demo-ponte-g2` em um terminal e `npm.cmd run dev` em outro. Abra `http://localhost:8081`, escolha a opção **Ponte Node-RED** e conecte.
+
+O caminho foi desenvolvido e testado como **Node-RED simulado → HTTP → ponte local → WebSocket → painel G2**. O passo de receber dados do Node-RED **real** só pode ser realizado depois de acesso autorizado à rede da instituição. A ponte é somente leitura e não possui comando de PLC.
+
+Confira as instruções e a função para instalar futuramente no Node-RED em [PONTE-NODERED-QUATRO-ESTACOES.md](documentacao/PONTE-NODERED-QUATRO-ESTACOES.md).
+
+Para checar os testes dessa ponte: `npm.cmd run testar-ponte`.
+
 Para publicar a interface online, siga [Hospedar no Render](documentacao/RENDER.md).
 
 Frontend em **React + TypeScript + Vite**, com conexão autenticada ao simulador WebSocket fornecido pelo professor. Mantém a interface Siemens, a botoeira e a opção de simulação local.
