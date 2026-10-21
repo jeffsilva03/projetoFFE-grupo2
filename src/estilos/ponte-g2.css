@@ -1,0 +1,13 @@
+.ihm-leitura-ponte-info { flex: 1 1 280px; display: grid; gap: 5px; }
+.ihm-leitura-ponte-info strong { color: #263e59; font-size: 13px; overflow-wrap: anywhere; }
+.ihm-leitura-ponte-info small { color: #64748b; font-size: 12px; }
+.ihm-ponte-grade { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 15px; }
+.ihm-ponte-estacao { min-width: 0; }
+.ihm-ponte-cabecalho { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e8edf2; padding-bottom: 12px; }
+.ihm-ponte-cabecalho span { color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: .07em; }
+.ihm-ponte-cabecalho h2 { margin: 2px 0 0; }
+.ihm-ponte-cabecalho > strong { font-size: 11px; border-radius: 5px; padding: 6px 9px; }
+.ihm-ponte-online { background: #e9f7ed; color: #19613c; }
+.ihm-ponte-offline { background: #f3f4f6; color: #64748b; }
+.ihm-ponte-situacao { margin: 13px 0; padding: 10px 12px; background: #f1f5f9; color: #334155; border-radius: 7px; font-size: 13px; font-weight: 700; }
+@media (max-width: 780px) { .ihm-ponte-grade { grid-template-columns: 1fr; } }
