@@ -15,7 +15,7 @@
     "leitura-g2": "node documentacao/simulador-leitura-g2.cjs",
     "ponte-g2": "node documentacao/ponte-nodered-g2.cjs",
     "demo-ponte-g2": "node documentacao/demo-ponte-g2.cjs",
-    "testar-ponte": "node --test testes/ponteG2.test.cjs"
+    "testar-ponte": "node --test testes/ponteG2.test.cjs testes/ponteDeltas.test.cjs"
   },
   "dependencies": {
     "react": "^19.2.0",
