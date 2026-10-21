@@ -20,6 +20,10 @@ Acesse `http://localhost:8081`, selecione **Sprint 2 · Leitura de sinais**, esc
 
 ## Sprint 2 — Ponte Node-RED com as quatro estações
 
+**Nova proposta de leitura periódica:** o código em [NODERED-FUNCTION-LEITURA-PERIODICA-G2.js](documentacao/NODERED-FUNCTION-LEITURA-PERIODICA-G2.js) seleciona apenas sinais novos vindos de um leitor S7 independente configurado com `diff=false` (ainda NÃO ligado à máquina). O plano de bancada e o inventário dos fontes estão em [PLANO-COMUNICACAO-REAL-G2.md](documentacao/PLANO-COMUNICACAO-REAL-G2.md). A `main` permanece com a Sprint 1.
+
+
+
 **Evolução mais recente:** endereço WebSocket configurável, cache temporário para mensagens parciais e descarte individual de sinais antigos. Instruções: [CONTINUACAO-SPRINT2-PONTE.md](documentacao/CONTINUACAO-SPRINT2-PONTE.md).
 
 
