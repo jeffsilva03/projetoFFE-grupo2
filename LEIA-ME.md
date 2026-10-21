@@ -24,7 +24,7 @@ Esta branch possui a nova opção **Sprint 2 · Ponte Node-RED**, que acompanha 
 
 Para ver funcionando **sem acessar a máquina**, execute `npm.cmd run demo-ponte-g2` em um terminal e `npm.cmd run dev` em outro. Abra `http://localhost:8081`, escolha a opção **Ponte Node-RED** e conecte.
 
-O caminho foi implementado como **Node-RED simulado → HTTP → ponte local → WebSocket → painel G2**. Os testes automatizados foram criados, mas a execução da nova branch ainda precisa ser confirmada. O passo de receber dados do Node-RED **real** só pode ser realizado depois de acesso autorizado à rede da instituição. A ponte é somente leitura e não possui comando de PLC.
+O caminho foi implementado como **Node-RED simulado → HTTP → ponte local → WebSocket → painel G2**. Os testes automatizados, a leitura de quatro estações, a proteção de comandos e os builds foram aprovados no GitHub Actions. O passo de receber dados do Node-RED **real** só pode ser realizado depois de acesso autorizado à rede da instituição. A ponte é somente leitura e não possui comando de PLC.
 
 Confira as instruções e a função para instalar futuramente no Node-RED em [PONTE-NODERED-QUATRO-ESTACOES.md](documentacao/PONTE-NODERED-QUATRO-ESTACOES.md).
 
