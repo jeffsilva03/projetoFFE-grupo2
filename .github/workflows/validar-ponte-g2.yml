@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feat/sprint2-ponte-nodered-4-estacoes
+      - feat/sprint2-ponte-config-e-deltas
   pull_request:
     paths:
       - 'src/**'

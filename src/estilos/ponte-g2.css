@@ -11,3 +11,6 @@
 .ihm-ponte-offline { background: #f3f4f6; color: #64748b; }
 .ihm-ponte-situacao { margin: 13px 0; padding: 10px 12px; background: #f1f5f9; color: #334155; border-radius: 7px; font-size: 13px; font-weight: 700; }
 @media (max-width: 780px) { .ihm-ponte-grade { grid-template-columns: 1fr; } }
+
+.ihm-leitura-ponte-info input { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid #aab4c1; border-radius: 7px; background: #fff; color: #25334a; font: inherit; font-size: 13px; box-sizing: border-box; }
+.ihm-leitura-ponte-info input:disabled { background: #f1f4f6; color: #64748b; }

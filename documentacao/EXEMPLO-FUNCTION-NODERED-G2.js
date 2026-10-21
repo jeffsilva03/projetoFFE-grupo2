@@ -1,6 +1,8 @@
 // COLE este código em um nó FUNCTION novo do Node-RED (apenas leitura).
 // Entrada: msg.payload do nó S7 IN fornecido pelo professor.
-// Saída: HTTP POST para uma ponte G2 na MESMA MÁQUINA.
+// Saída: HTTP POST local, ou HTTPS por gateway autorizado.
+// O timestamp é produzido somente no momento da chegada do S7 IN.
+// Com diff:true, ausência de mudanças NÃO comprova comunicação saudável.
 // Antes de ativar junto ao PLC real: autorização do professor/OT.
 // Não edite os nós S7 OUT nem inclua credenciais industriais neste código.
 
@@ -42,8 +44,14 @@ if (typeof token !== 'string' || token.length < 16) {
 }
 
 msg.method = 'POST';
-// Só funciona assim quando a ponte roda na mesma máquina do Node-RED.
-msg.url = 'http://127.0.0.1:8092/api/g2/telemetria';
+const endereco = String(env.get('G2_BRIDGE_HTTP_URL') || 'http://127.0.0.1:8092/api/g2/telemetria').trim();
+const local = /^http:\/\/(?:127\.0\.0\.1|localhost)(?::\d{1,5})?\/api\/g2\/telemetria$/.test(endereco);
+const seguro = /^https:\/\/[a-zA-Z0-9.-]+(?::\d{1,5})?\/api\/g2\/telemetria$/.test(endereco);
+if (!local && !seguro) {
+  node.error('Endereço G2 inválido. Use HTTP local ou HTTPS por gateway autorizado.');
+  return null;
+}
+msg.url = endereco;
 msg.headers = {
   'content-type': 'application/json',
   'x-g2-bridge-token': token,

@@ -1,5 +1,8 @@
 # Ponte Node-RED -> Grupo 2 — quatro estações
 
+> **Atualização:** a continuação desta ponte está em [CONTINUACAO-SPRINT2-PONTE.md](CONTINUACAO-SPRINT2-PONTE.md). Agora o endereço da ponte é configurável na IHM e sinais de pacotes parciais são mantidos só pelo prazo de atualização confirmado (3 s). Rede remota exige gateway HTTPS/WSS autorizado.
+
+
 ## Em uma frase
 
 O Node-RED envia **somente dados de leitura** para um servidor intermediário, e esse servidor entrega os dados à IHM web do Grupo 2.
@@ -82,7 +85,7 @@ Com um operador/responsável autorizado:
 - verificar os quatro cartões, sem assumir que um indicador seja equivalente a comando remoto;
 - interromper o envio de teste e confirmar que leituras antigas aparecem como indisponíveis;
 - conferir se os nomes da tabela S7 realmente chegam ao `msg.payload` no formato esperado;
-- se o `s7 in` publicar **apenas mudanças** (`diff: true`), um pacote pode conter apenas parte das tags; a interface mostrará as demais como “Não informado” e não vai fabricar estados. Para visão contínua e completa, será preciso definir com o professor um modo de obter **instantâneos completos e atualizados** de cada estação.
+- se o `s7 in` publicar **apenas mudanças** (`diff: true`), um pacote pode conter apenas parte das tags; a ponte preservará as últimas amostras individuais por até 3 segundos; depois disso exibirá “Não informado”, sem fabricar estados ou renovar timestamps artificialmente. Para visão contínua e completa, será preciso definir com o professor um modo de obter **instantâneos completos e atualizados** de cada estação.
 
 ## Contrato de comunicação criado por nós
 

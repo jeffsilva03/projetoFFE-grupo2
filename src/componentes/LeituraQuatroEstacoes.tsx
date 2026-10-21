@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { lerAmostraG2, obterIndicadoresG2, pacoteAtualG2, estadoResumidoG2 } from '../servicos/leituraG2';
 import { nomesEstacoesG2 } from '../tipos/leituraG2';
+import { validarUrlPonteG2 } from '../servicos/urlPonteG2';
 import type { AmostraLeituraG2, EstacaoG2, IndicadoresLeituraG2 } from '../tipos/leituraG2';
 
 const estacoes: EstacaoG2[] = ['ESTOQUE', 'PROCESSO', 'MONTAGEM', 'EXPEDICAO'];
@@ -26,6 +27,7 @@ const mostrarValor = (valor: boolean | null, sim = 'Ativo', nao = 'Inativo') =>
 
 export function LeituraQuatroEstacoes() {
   const [conexao, definirConexao] = useState<Conexao>('DESLIGADA');
+  const [endereco, definirEndereco] = useState(import.meta.env.VITE_G2_WS_URL || 'ws://localhost:8092/telemetria');
   const [registros, definirRegistros] = useState<Partial<Record<EstacaoG2, Registro>>>({});
   const [mensagem, definirMensagem] = useState('Aguardando conexão à ponte local.');
   const [agora, definirAgora] = useState(() => Date.now());
@@ -54,9 +56,11 @@ export function LeituraQuatroEstacoes() {
   }, [encerrar]);
 
   const conectar = useCallback(() => {
-    if (window.location.protocol === 'https:') {
+    let url: string;
+    try { url = validarUrlPonteG2(endereco, window.location.protocol === 'https:'); }
+    catch (erro) {
       definirConexao('ERRO');
-      definirMensagem('Ponte local usa ws://. Abra a IHM em http://localhost:8081.');
+      definirMensagem(erro instanceof Error ? erro.message : 'Endereço inválido.');
       return;
     }
     encerrar();
@@ -64,7 +68,7 @@ export function LeituraQuatroEstacoes() {
     definirConexao('CONECTANDO');
     definirMensagem('Conectando à ponte das quatro estações...');
     let socket: WebSocket;
-    try { socket = new WebSocket('ws://localhost:8092/telemetria'); }
+    try { socket = new WebSocket(url); }
     catch {
       definirConexao('ERRO');
       definirMensagem('Não foi possível criar a conexão WebSocket.');
@@ -112,7 +116,7 @@ export function LeituraQuatroEstacoes() {
       definirConexao(anterior => anterior === 'ERRO' ? anterior : 'DESCONECTADA');
       definirMensagem('A ponte desconectou. As leituras deixam de ser consideradas atuais.');
     };
-  }, [encerrar]);
+  }, [encerrar, endereco]);
 
   useEffect(() => {
     const intervalo = window.setInterval(() => definirAgora(Date.now()), 250);
@@ -127,10 +131,13 @@ export function LeituraQuatroEstacoes() {
     </div>
     <div className="ihm-leitura-config">
       <div className="ihm-leitura-controles">
-        <div className="ihm-leitura-ponte-info">
-          <strong>Ponte local: ws://localhost:8092/telemetria</strong>
-          <small>Para testar, execute npm run demo-ponte-g2 em outro terminal.</small>
-        </div>
+        <label className="ihm-leitura-ponte-info">
+          Endereço da ponte
+          <input type="url" aria-label="Endereço WebSocket da ponte G2"
+            spellCheck={false} value={endereco} disabled={conexao === 'ABERTA' || conexao === 'CONECTANDO'}
+            onChange={evento => definirEndereco(evento.target.value)} />
+          <small>Teste local: ws://localhost:8092/telemetria. Fora do computador: somente wss:// em gateway aprovado.</small>
+        </label>
         <div className="ihm-leitura-acoes">
           {conexao === 'ABERTA' || conexao === 'CONECTANDO' ?
             <button onClick={desconectar}>Desconectar</button> :
