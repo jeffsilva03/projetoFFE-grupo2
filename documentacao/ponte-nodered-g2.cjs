@@ -66,21 +66,78 @@ function dividirLeitura(payload, agora = Date.now()) {
   return resultado;
 }
 
+/**
+ * Consolida atualizações parciais do S7 (diff: true) sem reutilizar como atual
+ * um sinal que não foi reobservado nos últimos três segundos.
+ * Esse prazo é de qualidade de dado, não uma regra de segurança da máquina.
+ */
+function mesclarLeituraG2(cache, parcial, agora = Date.now()) {
+  const anterior = cache.get(parcial.estacao);
+  const ms = Date.parse(parcial.timestamp);
+  if (anterior && ms < anterior.ultimoTimestamp) {
+    throw new Error('Pacote fora de ordem.');
+  }
+  const porTag = new Map(anterior?.porTag ?? []);
+  for (const [tag, valor] of Object.entries(parcial.sinais)) {
+    porTag.set(tag, { valor, atualizadoEm: ms });
+  }
+  const sinais = {};
+  for (const tag of TAGS[parcial.estacao]) {
+    const entrada = porTag.get(tag);
+    sinais[tag] = entrada && agora - entrada.atualizadoEm <= 3000 && entrada.atualizadoEm <= agora + 1000
+      ? entrada.valor : null;
+  }
+  const amostra = { timestamp: parcial.timestamp, estacao: parcial.estacao, sinais };
+  cache.set(parcial.estacao, {
+    porTag, ultimoTimestamp: ms, recebidoEm: agora, amostra,
+  });
+  return amostra;
+}
+
+function snapshotAtualG2(registro, estacao, agora = Date.now()) {
+  if (!registro || agora - registro.recebidoEm > 3000) return null;
+  const sinais = {};
+  for (const tag of TAGS[estacao]) {
+    const entrada = registro.porTag.get(tag);
+    sinais[tag] = entrada && agora - entrada.atualizadoEm <= 3000 ? entrada.valor : null;
+  }
+  return { timestamp: registro.amostra.timestamp, estacao, sinais };
+}
+
+function origensAutorizadas(valor) {
+  const origens = new Set(['http://localhost:8081', 'http://127.0.0.1:8081']);
+  if (!valor) return origens;
+  for (const entrada of valor.split(',').map(x => x.trim()).filter(Boolean)) {
+    const url = new URL(entrada);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password ||
+      url.pathname !== '/' || url.search || url.hash || url.origin !== entrada) {
+      throw new Error('Origem G2 inválida. Informe apenas https://dominio ou http://localhost:porta.');
+    }
+    if (url.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(url.hostname)) {
+      throw new Error('Origem HTTP remota não permitida. Configure HTTPS.');
+    }
+    origens.add(url.origin);
+  }
+  return origens;
+}
+
 function responder(response, codigo, mensagem) {
   response.writeHead(codigo, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
   response.end(JSON.stringify(mensagem));
 }
 
-async function iniciarPonte({ token, porta = PORTA_PADRAO } = {}) {
+async function iniciarPonte({ token, porta = PORTA_PADRAO, origens = '' } = {}) {
   if (typeof token !== 'string' || token.length < 16) throw new Error('Configure G2_BRIDGE_TOKEN com no mínimo 16 caracteres.');
   if (!Number.isInteger(porta) || porta < 0 || porta > 65535) throw new Error('Porta inválida.');
+  const permitidas = origensAutorizadas(origens);
   const ultimas = new Map();
   const ws = new WebSocketServer({ noServer: true, maxPayload: 1024 });
   ws.on('connection', cliente => {
     for (const estacao of ESTACOES) {
       const registro = ultimas.get(estacao);
-      if (registro && Date.now() - registro.recebidoEm <= 3000 && cliente.readyState === WebSocket.OPEN) {
-        cliente.send(JSON.stringify(registro.amostra));
+      const snapshot = snapshotAtualG2(registro, estacao);
+      if (snapshot && cliente.readyState === WebSocket.OPEN) {
+        cliente.send(JSON.stringify(snapshot));
       }
     }
     // Proíbe qualquer comando ou envio de mensagens pelo navegador.
@@ -124,8 +181,13 @@ async function iniciarPonte({ token, porta = PORTA_PADRAO } = {}) {
       let amostras;
       try { amostras = dividirLeitura(JSON.parse(Buffer.concat(partes).toString('utf8'))); }
       catch (erro) { responder(resposta, 422, { erro: erro.message }); return; }
-      for (const amostra of amostras) {
-        ultimas.set(amostra.estacao, { amostra, recebidoEm: Date.now() });
+      // Rejeita o pacote inteiro se uma estação tiver timestamp mais antigo.
+      if (amostras.some(amostra => {
+        const anterior = ultimas.get(amostra.estacao);
+        return anterior && Date.parse(amostra.timestamp) < anterior.ultimoTimestamp;
+      })) return responder(resposta, 409, { erro: 'Leitura fora de ordem.' });
+      for (const parcial of amostras) {
+        const amostra = mesclarLeituraG2(ultimas, parcial);
         const mensagem = JSON.stringify(amostra);
         for (const cliente of ws.clients) {
           if (cliente.readyState === WebSocket.OPEN) cliente.send(mensagem);
@@ -138,7 +200,7 @@ async function iniciarPonte({ token, porta = PORTA_PADRAO } = {}) {
   servidor.on('upgrade', (requisicao, socket, head) => {
     const caminho = new URL(requisicao.url ?? '/', 'http://localhost').pathname;
     const origem = requisicao.headers.origin;
-    const permitida = origem === 'http://localhost:8081' || origem === 'http://127.0.0.1:8081';
+    const permitida = permitidas.has(origem);
     if (caminho !== '/telemetria' || !permitida) {
       socket.write('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');
       socket.destroy();
@@ -168,7 +230,11 @@ async function iniciarPonte({ token, porta = PORTA_PADRAO } = {}) {
 }
 
 if (require.main === module) {
-  iniciarPonte({ token: process.env.G2_BRIDGE_TOKEN, porta: Number(process.env.G2_BRIDGE_PORT ?? PORTA_PADRAO) })
+  iniciarPonte({
+    token: process.env.G2_BRIDGE_TOKEN,
+    porta: Number(process.env.G2_BRIDGE_PORT ?? PORTA_PADRAO),
+    origens: process.env.G2_IHM_ORIGINS ?? '',
+  })
     .then(ponte => {
       console.log('[G2] Ponte SOMENTE LEITURA ativa em http://127.0.0.1:' + ponte.porta);
       console.log('[G2] POST /api/g2/telemetria; WebSocket /telemetria');
@@ -177,4 +243,4 @@ if (require.main === module) {
     .catch(erro => { console.error('[G2] Não iniciou:', erro.message); process.exitCode = 1; });
 }
 
-module.exports = { iniciarPonte, dividirLeitura, TAGS, ESTACOES };
+module.exports = { iniciarPonte, dividirLeitura, mesclarLeituraG2, snapshotAtualG2, origensAutorizadas, TAGS, ESTACOES };
