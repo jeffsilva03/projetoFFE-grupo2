@@ -20,6 +20,9 @@ Acesse `http://localhost:8081`, selecione **Sprint 2 · Leitura de sinais**, esc
 
 ## Sprint 2 — Ponte Node-RED com as quatro estações
 
+**Evolução mais recente:** endereço WebSocket configurável, cache temporário para mensagens parciais e descarte individual de sinais antigos. Instruções: [CONTINUACAO-SPRINT2-PONTE.md](documentacao/CONTINUACAO-SPRINT2-PONTE.md).
+
+
 Esta branch possui a nova opção **Sprint 2 · Ponte Node-RED**, que acompanha Estoque, Processo, Montagem e Expedição ao mesmo tempo.
 
 Para ver funcionando **sem acessar a máquina**, execute `npm.cmd run demo-ponte-g2` em um terminal e `npm.cmd run dev` em outro. Abra `http://localhost:8081`, escolha a opção **Ponte Node-RED** e conecte.
