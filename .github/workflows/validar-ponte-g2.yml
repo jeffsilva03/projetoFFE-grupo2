@@ -1,0 +1,34 @@
+name: Validar ponte Node-RED G2 - 4 estacoes
+
+on:
+  push:
+    branches:
+      - feat/sprint2-ponte-nodered-4-estacoes
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'testes/**'
+      - 'documentacao/*.cjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/validar-ponte-g2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run verificar
+      - run: npm run testar
+      - run: npm run testar-ponte
+      - run: node testes/leituraG2-smoke.cjs
+      - run: npm run build
+      - run: npm run integracao
