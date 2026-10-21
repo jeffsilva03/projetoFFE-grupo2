@@ -12,7 +12,7 @@
 |---|---|---|
 | `NODERED/flows.json` | 191 nós; **1 `s7 in` (`mode:all`, `diff:true`)**; endpoint S7 configurado para **200 ms**; **153 tags** (DB9/101/102/103); **60 nós `s7 out`**; **11 `http request`** externos | Não contém `http in`, `http response`, `websocket in/out` ou `mqtt in/out` para servir telemetria G2; `inject` a cada 1/3 s no fluxo não constitui uma releitura S7 completa para nossa IHM |
 | `Manual/XL4002PD00.PT.MU.pdf` | S7-1200/1500, IHM KTP700, Start/Stop, reset físico; Node-RED descrito nas pp.39-40 para realidade aumentada/IoT | Manual não fornece uma URL de API/WS G2 e não valida uma conexão remota à planta |
-| `Aplicativos.pdf` | Node-RED local e paleta `node-red-contrib-s7` estão na relação de aplicativos | Relação de aplicativos não comprova que um endpoint de telemetria da IHM já esteja configurado |
+| `Aplicativos.pdf` | Node-RED local e paleta `node-red-contrib-s7` estão na relação de aplicativos | A presença do UaExpert não comprova um endereço OPC UA de leitura da IHM; a lista de aplicativos não demonstra endpoint configurado |
 | `SWAGGER.JSON` | **57 caminhos** REST para MES, inventário, produção, eventos e pedidos | Nenhum caminho encontrado que documente diretamente a **leitura ao vivo dos 22 sinais de botoeira/segurança** das quatro estações; APIs de produção não são automaticamente telemetria PLC |
 | `MES/Smart4.0.postman_collection.json` | **35 requisições**, majoritariamente POST de pedidos/processos/eventos MES | Não encontramos uma coleção pronta de assinatura WS/telemetria da IHM |
 | `PROGRAMA_ATUAL_N2` (4 projetos TIA Portal V20) | Artefatos internos `System/PEData.plf` com referências como `StatusProcesso`, `IHM_*`, alarmes, resets e botoeira | Arquivos binários/proprietários: busca de nomes **não equivale a abrir os blocos ladder/SCL no TIA**. Não comprovam endereços externos de API nem permitem afirmar que algo inexiste em todo o projeto |
@@ -37,7 +37,7 @@ O nó `s7 in` está configurado com `diff: true`. Assim, o processamento pode re
 
 O fluxo contém alguns `inject` repetidos (1 s/3 s), **ligados principalmente a funções do Estoque e requisições MES**. Eles não publicam leitura completa das quatro estações para o G2. O `SWAGGER.JSON` e o Postman abordam APIs MES e eventos, não substituem a aquisição S7.
 
-## 3. Por que criar leitura periódica se já temos `diff: true`?
+Outra possibilidade não comprovada nos arquivos é usar soluções como OPC UA ou a plataforma Tago IO citada no manual (p. 40). A existência desses softwares/serviços não demonstra uma URL nem um contrato de telemetria das 22 tags do G2.\n\n## 3. Por que criar leitura periódica se já temos `diff: true`?
 
 Exemplo:
 
