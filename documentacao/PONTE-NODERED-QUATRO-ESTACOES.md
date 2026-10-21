@@ -132,7 +132,7 @@ O uso do HTTP local e de token de exemplo **não autoriza um deploy remoto**. Pa
 
 ## Situação atual
 
-**Concluído:** ponte Node.js, encaminhamento HTTP -> WebSocket, quatro estações na UI, demonstração sem máquina, testes de leitura/segurança.
+**Implementado:** ponte Node.js, encaminhamento HTTP -> WebSocket, quatro estações na UI, demonstração sem máquina e testes de leitura/segurança. **Execução dos testes da nova branch ainda não confirmada pelo CI.**
 
 **Pendente:** instalar em ambiente autorizado, ligar o Function ao Node-RED existente, confirmar em bancada valores reais e garantir instantâneos de leitura completos. Depois vem a integração com Grupo 1.
 
