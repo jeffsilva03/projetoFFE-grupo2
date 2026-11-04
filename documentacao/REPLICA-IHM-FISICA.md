@@ -36,3 +36,24 @@ Na branch Sprint2: executar \`npm ci\`, \`npm run verificar\`, \`npm run testar\
 Há três fontes selecionáveis na interface: Fotografia (captura estática), Simulação local (controles demonstrativos) e Ponte G2 (WebSocket somente leitura). O simulador tem SETUP Manual/Automático, START/STOP/RESET, emergência virtual travável e liberável, Servo/Home/JOG por clique e saídas digitais virtuais, com bloqueios locais. A lógica simulada NÃO substitui os intertravamentos reais da máquina.
 
 Na ponte, a IHM mostra os sinais do DB101 que foram efetivamente publicados; ausência/vencimento é desconhecido, não "desligado". Posições reais X/Y, Salvar/Calcular e comandos de movimento permanecem indisponíveis sem dados e permissões homologados. Contrato do App Shell do Grupo 1 continua provisório.
+
+## Laboratório START/STOP — evolução de 04/11/2026
+
+A réplica conta com um quarto modo, Teste START/STOP, que envia somente para o mock
+WebSocket local ws://127.0.0.1:8093/demo-comandos, independente da ponte Node-RED.
+
+1. Executar npm.cmd run mock-comandos-g2 em um terminal.
+2. Executar npm.cmd run dev em outro terminal.
+3. Abrir http://localhost:8081 > Sprint 2 > IHM real > Teste START/STOP.
+4. Conectar mock START/STOP. Pressionar os botões verde/vermelho da botoeira.
+5. Conferir SOLICITACAO, ACK e CONFIRMACAO no histórico.
+6. Simular falha de segurança para validar a recusa de START (cenário fictício).
+
+ACK indica recebimento da solicitação pelo mock, não execução. A confirmação exige
+telemetria de estado correlacionada ao ID enviado. Ausência de retorno em 4,5 s
+invalida a sessão. Só START e STOP são enviados ao mock; RESET, JOG e emergência
+não são transmitidos nesse modo. O servidor escuta apenas loopback 127.0.0.1,
+sem qualquer conexão S7, OPC UA, PLC, Node-RED ou atuação industrial.
+
+Teste real na bancada depende de autorização do professor, gateway de comandos
+seguro e ensaio supervisionado. O laboratório não certifica lógica de segurança.

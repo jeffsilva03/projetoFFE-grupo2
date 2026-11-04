@@ -6,6 +6,9 @@ import {
 } from '../dados/ihmFisica';
 import { entradasProcesso, saidasProcesso, interpretarSinaisProcesso } from '../dados/sinaisProcesso';
 import { usarPonteProcesso } from '../estado/usarPonteProcesso';
+import { usarTesteComandos } from '../estado/usarTesteComandos';
+import { PainelTesteComandos } from './PainelTesteComandos';
+import type { ComandoTeste } from '../servicos/protocoloTesteComandos';
 import type { AmostraLeituraG2 } from '../tipos/leituraG2';
 import '../estilos/ihm-fisica.css';
 
@@ -36,11 +39,12 @@ function SimboloMenu({ tipo }: { tipo: Exclude<TelaFisica, 'INICIO'> }) {
 }
 
 
-type OrigemDiagnostico = 'FOTOGRAFIA' | 'SIMULACAO' | 'PONTE';
+type OrigemDiagnostico = 'FOTOGRAFIA' | 'SIMULACAO' | 'PONTE' | 'TESTE';
 const origemNomes: Record<OrigemDiagnostico,string> = {
   FOTOGRAFIA:'Foto de referência',
   SIMULACAO:'Simulação local',
   PONTE:'Ponte G2 · leitura',
+  TESTE:'Teste START/STOP',
 };
 
 function Led({ ativo }: { ativo: boolean | null }) {
@@ -93,9 +97,11 @@ function DiagnosticoFisico({origem,demo,amostra}:{
 }) {
   const sinais=interpretarSinaisProcesso(origem==='PONTE'?amostra:null);
   const entradas = origem==='PONTE' ? sinais.entradas : origem==='SIMULACAO'
-    ? entradasVirtuais(demo) : Object.fromEntries(entradasProcesso.map((s,i)=>[s.id,entradasFotografadas[i].ativo]));
+    ? entradasVirtuais(demo) : origem==='TESTE' ? Object.fromEntries(entradasProcesso.map(s=>[s.id,null]))
+    : Object.fromEntries(entradasProcesso.map((s,i)=>[s.id,entradasFotografadas[i].ativo]));
   const saidas = origem==='PONTE' ? sinais.saidas : origem==='SIMULACAO'
-    ? saidasVirtuais(demo) : Object.fromEntries(saidasProcesso.map(s=>[s.id,false]));
+    ? saidasVirtuais(demo) : origem==='TESTE' ? Object.fromEntries(saidasProcesso.map(s=>[s.id,null]))
+    : Object.fromEntries(saidasProcesso.map(s=>[s.id,false]));
   const grupos=[{titulo:'Entradas',itens:entradasProcesso,valores:entradas},{titulo:'Saídas',itens:saidasProcesso,valores:saidas}];
   return <div className="real-grid-diagnostico">
     {grupos.map(grupo=><div key={grupo.titulo}><h3>{grupo.titulo}</h3>
@@ -112,8 +118,8 @@ function TabelaPosicoes({itens,origem}:{
 }) {
   return <div className="real-tabela-posicoes">{itens.map(item=><div className="real-posicao-linha" key={item.nome}>
     <span>{item.nome}</span>
-    <span>{origem==='PONTE'?'—':formatarMilimetros(item.x)}</span>
-    <span>{origem==='PONTE'?'—':formatarMilimetros(item.y)}</span>
+    <span>{origem==='PONTE'||origem==='TESTE'?'—':formatarMilimetros(item.x)}</span>
+    <span>{origem==='PONTE'||origem==='TESTE'?'—':formatarMilimetros(item.y)}</span>
   </div>)}</div>;
 }
 function habilitarManual(demo:EstadoBotoeiraDemo,origem:OrigemDiagnostico) {
@@ -225,14 +231,19 @@ function SaidasManuais({origem,demo,executar}:{
   </div>;
 }
 
-function BotoeiraFisica({estado,origem,executar,segurancaPonte}:{
+function BotoeiraFisica({estado,origem,executar,segurancaPonte,teste}:{
   estado:EstadoBotoeiraDemo; origem:OrigemDiagnostico;
   executar:(tipo:ComandoBotoeiraDemo)=>void; segurancaPonte:boolean|null;
+  teste:{podeEnviar:boolean; estado:'PARADA'|'EM_EXECUCAO'|null;
+    seguranca:'OK'|'BLOQUEADA'|null; enviar:(comando:ComandoTeste)=>void};
 }) {
   const interativa=origem==='SIMULACAO';
+  const comandosAtivos=interativa||(origem==='TESTE'&&teste.podeEnviar);
   const emPressionada=estado.emergencia==='PRESSIONADA';
-  const segurançaOk=origem==='PONTE'?segurancaPonte:origem==='SIMULACAO'?estado.emergencia==='LIBERADA':true;
-  const emergenciaAtiva=origem==='SIMULACAO'?estado.emergencia!=='LIBERADA':origem==='FOTOGRAFIA'?true:null;
+  const segurançaOk=origem==='TESTE'?(teste.seguranca==='OK'?true:teste.seguranca==='BLOQUEADA'?false:null)
+    :origem==='PONTE'?segurancaPonte:origem==='SIMULACAO'?estado.emergencia==='LIBERADA':true;
+  const emergenciaAtiva=origem==='TESTE'?(teste.seguranca==='BLOQUEADA'?true:teste.seguranca==='OK'?false:null)
+    :origem==='SIMULACAO'?estado.emergencia!=='LIBERADA':origem==='FOTOGRAFIA'?true:null;
   return <aside className="real-botoeira" aria-label="Reprodução da botoeira física">
     <div className="real-botoeira-topo"><div className="real-qr" aria-hidden="true"><i /><i /><i /><i /></div>
       <div className="real-logo-grande"><CuboSmart /><b>SMART 4.0</b></div>
@@ -242,12 +253,16 @@ function BotoeiraFisica({estado,origem,executar,segurancaPonte}:{
         disabled={!interativa} aria-label={'SETUP virtual: '+estado.modo}
         title="Alternar Manual/Automático somente na demonstração" onClick={()=>executar('SETUP')}
         className="real-comando-aro real-setup real-interativo"><i /></button></div>
-      <div className="real-botao-externo"><span>START</span><button type="button" disabled={!interativa}
-        aria-label="START — iniciar simulação local" title="Apenas demonstração local"
-        onClick={()=>executar('START')} className={'real-comando-aro real-interativo real-start '+(interativa && estado.status==='OPERANDO'?'real-selecionado':'')} /></div>
-      <div className="real-botao-externo"><span>STOP</span><button type="button" disabled={!interativa}
-        aria-label="STOP — parar simulação local" title="Apenas demonstração local"
-        onClick={()=>executar('STOP')} className={'real-comando-aro real-interativo real-stop '+(interativa && estado.status==='PARADA'?'real-selecionado':'')} /></div>
+      <div className="real-botao-externo"><span>START</span><button type="button" disabled={!comandosAtivos}
+        aria-label="START — solicitar ao simulador local" title="Somente mock local; não movimenta a planta"
+        onClick={()=>origem==='TESTE'?teste.enviar('START'):executar('START')}
+        className={'real-comando-aro real-interativo real-start '+((interativa && estado.status==='OPERANDO')||
+          (origem==='TESTE'&&teste.estado==='EM_EXECUCAO')?'real-selecionado':'')} /></div>
+      <div className="real-botao-externo"><span>STOP</span><button type="button" disabled={!comandosAtivos}
+        aria-label="STOP — solicitar ao simulador local" title="Somente mock local; não é parada de emergência"
+        onClick={()=>origem==='TESTE'?teste.enviar('STOP'):executar('STOP')}
+        className={'real-comando-aro real-interativo real-stop '+((interativa&&estado.status==='PARADA')||
+          (origem==='TESTE'&&teste.estado==='PARADA')?'real-selecionado':'')} /></div>
       <div className="real-botao-externo"><button type="button" disabled={!interativa}
         aria-label="RESET — reiniciar simulação local" title="Apenas demonstração local"
         onClick={()=>executar('RESET')} className="real-comando-aro real-interativo real-reset" /><span>RESET</span></div>
@@ -276,6 +291,7 @@ export function IhmFisica() {
   const [origem,definirOrigem]=useState<OrigemDiagnostico>('SIMULACAO');
   const [agora,definirAgora]=useState(()=>new Date());
   const ponte=usarPonteProcesso();
+  const teste=usarTesteComandos();
   const amostra=origem==='PONTE' && ponte.atualizada?ponte.amostra:null;
   const seguranca=interpretarSinaisProcesso(amostra).segurancaOk;
   useEffect(()=>{
@@ -284,6 +300,7 @@ export function IhmFisica() {
   },[]);
   function mudarFonte(proxima:OrigemDiagnostico) {
     if(proxima!=='PONTE') ponte.desconectar();
+    if(proxima!=='TESTE') teste.desconectar();
     definirOrigem(proxima);
   }
   return <section className="real-area" aria-label="Réplica da estação de processo Smart 4.0">
@@ -307,6 +324,7 @@ export function IhmFisica() {
         ? 'Pacote atual da estação de Processo.': 'Valores indisponíveis até receber pacote atual (até 3 s).'}</p>
       <small>Conectar à ponte não comprova que a fonte seja a máquina real. Não existe envio de comandos.</small>
     </div>}
+    {origem==='TESTE' && <PainelTesteComandos teste={teste} />}
     {origem==='SIMULACAO' && <div className={'real-status-demonstracao '+(demo.status==='OPERANDO'?'operando':'parada')} role="status" aria-live="polite">
       <span className="real-status-ponto" aria-hidden="true" />
       <strong>DEMO: {demo.status==='OPERANDO'?'EM EXECUÇÃO':'PARADA'} · {demo.modo}
@@ -333,10 +351,12 @@ export function IhmFisica() {
         </div>
         <div className="real-teclas">{Array.from({length:8},(_,i)=><div key={i}><small>F{i+1}</small><span/></div>)}</div>
       </div>
-      <BotoeiraFisica origem={origem} estado={demo} executar={executarDemo} segurancaPonte={seguranca}/>
+      <BotoeiraFisica origem={origem} estado={demo} executar={executarDemo} segurancaPonte={seguranca}
+        teste={{podeEnviar:teste.podeEnviar,estado:teste.estado,seguranca:teste.seguranca,enviar:teste.enviar}}/>
     </div></div>
     <p className="real-rodape">Modo Manual: pare a demonstração, gire SETUP e habilite Servo antes de JOG ou Home.
       JOG altera apenas posições fictícias, 0,5 mm por clique. Calcular/Salvar permanecem bloqueados
-      sem algoritmo validado. Em Ponte G2, ausência de telemetria torna os sinais desconhecidos.</p>
+      sem algoritmo validado. Em Ponte G2, ausência de telemetria torna os sinais desconhecidos.
+      No Teste START/STOP, só o mock local recebe comandos e confirma o estado.</p>
   </section>;
 }
