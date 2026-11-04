@@ -19,6 +19,10 @@ const tagsG2 = [
   'processo_segurancaOK', 'processo_chaveAutomatico',
   'processo_botaoVerde', 'processo_botaoVermelho',
   'processo_atuadoresPosicaoOK', 'processo_atuadoresOcupado',
+    'processo_eixoZAvancado', 'processo_eixoZRecuado',
+    'processo_sensorVacuoManipulador', 'processo_sensorVacuo',
+    'processo_avancaEixoZ', 'processo_acionaVacuoManipulador',
+    'processo_acionaVacuoMesa', 'processo_esteira1', 'processo_esteira2',
   // MONTAGEM (DB102)
   'montagem_segurancaOK', 'montagem_chaveAutomatico',
   'montagem_botaoVerde', 'montagem_botaoVermelho',

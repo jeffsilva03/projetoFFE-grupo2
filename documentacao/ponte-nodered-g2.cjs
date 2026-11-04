@@ -20,6 +20,11 @@ const TAGS = Object.freeze({
   PROCESSO: [
     'processo_segurancaOK', 'processo_chaveAutomatico', 'processo_botaoVerde',
     'processo_botaoVermelho', 'processo_atuadoresPosicaoOK', 'processo_atuadoresOcupado',
+    // Novas entradas e saídas de Processo: SOMENTE telemetria, nunca escrita.
+    'processo_eixoZAvancado', 'processo_eixoZRecuado',
+    'processo_sensorVacuoManipulador', 'processo_sensorVacuo',
+    'processo_avancaEixoZ', 'processo_acionaVacuoManipulador',
+    'processo_acionaVacuoMesa', 'processo_esteira1', 'processo_esteira2',
   ],
   MONTAGEM: [
     'montagem_segurancaOK', 'montagem_chaveAutomatico', 'montagem_botaoVerde',

@@ -29,3 +29,10 @@ Na branch Sprint2: executar \`npm ci\`, \`npm run verificar\`, \`npm run testar\
 - Um indicador de estado acima da réplica exibe o resultado de cada clique.
 - Sinaleiros de segurança e leituras da IHM são representações fotográficas e **não são validados por essa simulação**.
 - Comandos do CLP, Node-RED, servo, JOG, setup e parada de emergência da máquina real continuam indisponíveis; a demonstração não substitui o circuito de segurança.
+
+
+## Evolução de 04/11/2026
+
+Há três fontes selecionáveis na interface: Fotografia (captura estática), Simulação local (controles demonstrativos) e Ponte G2 (WebSocket somente leitura). O simulador tem SETUP Manual/Automático, START/STOP/RESET, emergência virtual travável e liberável, Servo/Home/JOG por clique e saídas digitais virtuais, com bloqueios locais. A lógica simulada NÃO substitui os intertravamentos reais da máquina.
+
+Na ponte, a IHM mostra os sinais do DB101 que foram efetivamente publicados; ausência/vencimento é desconhecido, não "desligado". Posições reais X/Y, Salvar/Calcular e comandos de movimento permanecem indisponíveis sem dados e permissões homologados. Contrato do App Shell do Grupo 1 continua provisório.

@@ -26,6 +26,16 @@ function gerarPacote(passo = 0) {
       processo_botaoVermelho: stop,
       processo_atuadoresPosicaoOK: !ocupado,
       processo_atuadoresOcupado: ocupado,
+      // Dados demonstrativos adicionais, não lidos no CLP.
+      processo_eixoZAvancado: ocupado,
+      processo_eixoZRecuado: !ocupado,
+      processo_sensorVacuoManipulador: ocupado && !emergencia,
+      processo_sensorVacuo: ocupado && !emergencia,
+      processo_avancaEixoZ: ocupado && !emergencia,
+      processo_acionaVacuoManipulador: ocupado && !emergencia,
+      processo_acionaVacuoMesa: ocupado && !emergencia,
+      processo_esteira1: !emergencia,
+      processo_esteira2: !emergencia,
       // MONTAGEM (DB102)
       montagem_segurancaOK: !emergencia,
       montagem_chaveAutomatico: true,

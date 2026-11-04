@@ -51,3 +51,12 @@ npm.cmd run testar-ponte
 npm.cmd run build
 npm.cmd run integracao
 ```
+
+
+## Implementação em Sprint2, 04/11/2026
+
+- A ponte passa agora 9 sinais adicionais do DB101 usados no diagnóstico da IHM de Processo.
+- As tags continuam estritamente em **somente leitura**, com validação boolean, buffer por tag e expiração de 3 segundos.
+- O demo-ponte-g2 publica valores artificiais para todos os sinais conhecidos do diagnóstico.
+- Emergência individual do painel e Status Smart Sense **não têm tags equivalentes confirmadas** e permanecem desconhecidas no modo Ponte.
+- Na réplica, os modos Fotografia, Simulação e Ponte são separados. Nenhum deles habilita escrita industrial.
