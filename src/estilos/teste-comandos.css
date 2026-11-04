@@ -1,0 +1,31 @@
+/* Painel de protocolo didático — isolado dos estilos gerais da IHM. */
+.real-teste-comandos { border:1px solid #577295; border-radius:8px; background:#1b2739; color:#e8eff9;
+  padding:14px 16px; margin:12px 0; display:flex; flex-direction:column; gap:10px; }
+.real-teste-topo { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
+.real-teste-topo>div { flex:1; min-width:220px; }
+.real-teste-topo strong { font-size:12px; letter-spacing:.06em; }
+.real-teste-comandos p { margin:5px 0; font-size:12px; line-height:1.5; color:#d5e1f0; }
+.real-teste-comandos code { color:#cfeaff; }
+.real-teste-comandos button { border:1px solid #88a7d0; border-radius:6px; padding:8px 12px;
+  background:#2e4f79; color:#fff; font-size:12px; font-weight:700; cursor:pointer; }
+.real-teste-comandos button:not(:disabled):hover { background:#426da1; }
+.real-teste-comandos button:disabled { cursor:not-allowed; opacity:.48; }
+.real-teste-comandos button:focus-visible { outline:2px solid #d3ecff; outline-offset:2px; }
+.real-teste-resumo { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.real-teste-resumo span { display:flex; flex-direction:column; gap:5px; min-width:0; padding:10px;
+  border:1px solid #516983; border-radius:6px; background:#243650; }
+.real-teste-resumo small { font-size:9px; font-weight:800; color:#b5cbe5; letter-spacing:.04em; }
+.real-teste-resumo strong { font-size:12px; overflow-wrap:anywhere; }
+.real-teste-cenario { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.real-teste-cenario span { font-size:12px; font-weight:700; }
+.real-teste-feedback { color:#fff !important; font-weight:600; }
+.real-teste-comandos details { padding:6px 0; border-top:1px solid #465a73; }
+.real-teste-comandos summary { cursor:pointer; font-size:12px; font-weight:700; }
+.real-teste-historico { display:flex; flex-direction:column; gap:5px; max-height:190px;
+  overflow:auto; margin:10px 0; padding-left:20px; font-size:11px; }
+.real-teste-historico li { line-height:1.5; }
+.real-teste-historico time { font-variant-numeric:tabular-nums; color:#bfd4ec; margin-right:8px; }
+.real-teste-historico strong { padding-right:5px; color:#f0f5ff; }
+.real-teste-comandos>small { color:#bdccdf; font-size:10px; line-height:1.4; }
+@media(max-width:900px){.real-teste-resumo { grid-template-columns:repeat(2,minmax(0,1fr)); }}
+@media(max-width:540px){.real-teste-resumo { grid-template-columns:1fr; }}
