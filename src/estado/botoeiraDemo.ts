@@ -54,7 +54,7 @@ export function reduzirBotoeiraDemo(
   if (comando==='RESET') {
     if (estado.emergencia==='PRESSIONADA') return recusado(estado,'Libere o botão de emergência virtual antes do RESET.');
     return {...estado,status:'PARADA',emergencia:'LIBERADA',servo:{X:false,Y:false},
-      saidas:{...saidasDesligadas},mensagem:'RESET local: demonstração parada e rearmada.'};
+      saidas:{...saidasDesligadas},mensagem:'RESET local: estado demonstrativo reiniciado, parado e rearmado.'};
   }
   if (comando==='STOP') {
     return {...estado,status:'PARADA',saidas:{...saidasDesligadas},mensagem:'STOP local: ciclo demonstrativo interrompido.'};

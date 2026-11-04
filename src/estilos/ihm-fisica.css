@@ -123,3 +123,37 @@
 @media (prefers-reduced-motion:reduce) {
   .real-area .real-comando-aro.real-interativo { transition:none; }
 }
+
+/* Fontes independentes: foto, simulação e WebSocket de leitura. */
+.real-seletor-fonte { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.real-area .real-seletor-fonte button {
+  padding:9px 13px; border:1px solid #657484; border-radius:6px;
+  background:#243241; color:#eaf3fa; font-size:12px; font-weight:700; cursor:pointer;
+}
+.real-area .real-seletor-fonte button[aria-pressed="true"] {
+  background:#dbeaff; border-color:#6b9fe6; color:#112a47; box-shadow:0 0 0 1px #70adff;
+}
+.real-area .real-seletor-fonte button:focus-visible,
+.real-area .real-ponte-config button:focus-visible { outline:2px solid #86b8ff; outline-offset:2px; }
+.real-ponte-config { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:end;
+  margin-bottom:12px; padding:14px; border-radius:7px; border:1px solid #53667b;
+  background:#1d2938; color:#e7edf6; font-size:12px; }
+.real-ponte-config label { display:flex; flex-direction:column; gap:5px; flex:1; min-width:250px; }
+.real-ponte-config input { width:100%; border:1px solid #8697ae; border-radius:5px;
+  padding:9px 10px; background:#f8fafc; color:#162132; font:13px Arial,sans-serif; }
+.real-area .real-ponte-config button { border:1px solid #7fa5d8; border-radius:5px;
+  padding:9px 12px; background:#2f4f77; color:#fff; cursor:pointer; font-weight:700; }
+.real-ponte-config p { width:100%; margin:0; color:#e2eaf5; }
+.real-ponte-config small { display:block; width:100%; color:#bfcddc; }
+.real-descricao-fonte { color:#c3ceda; font-size:12px; margin:8px 0 14px; }
+.real-led.desconhecido { background:#7b8794; box-shadow:0 0 0 1px #c2cfdf; opacity:.7; }
+.real-area .real-controle-simulado:not(:disabled) { cursor:pointer; border-color:#b4c0d8; }
+.real-area .real-controle-simulado:not(:disabled):hover { background:#7285a3; }
+.real-area .real-controle-simulado:focus-visible { outline:2px solid #d5ff90; outline-offset:1px; }
+.real-area .real-controle-simulado.real-ativo-manual { background:#77a929; border-color:#bdf050; }
+.real-area .real-comando-aro.real-interativo:disabled { opacity:.65; filter:grayscale(.15); cursor:not-allowed; pointer-events:none; }
+.real-luz-apagada { background:radial-gradient(circle at 42% 28%,#b4b9bb,#626f77); box-shadow:0 0 0 2px #60736d; }
+.real-emergencia-acionada button { transform:translateY(5px) scale(.93); background:radial-gradient(circle,#f54b47,#970d11); }
+.real-emergencia button:not(:disabled) { cursor:pointer; }
+.real-emergencia button:focus-visible { outline:3px solid #2054a2; outline-offset:5px; }
+@media (max-width:650px) { .real-seletor-fonte button { flex:1; min-width:130px; } .real-ponte-config label { min-width:190px; } }
