@@ -25,6 +25,7 @@ jobs:
       - run: npm run testar
       - run: npm run testar-ponte
       - run: npm run testar-mock-comandos
+      - run: npm run testar-adaptador-n2
       - run: node testes/leituraG2-smoke.cjs
       - run: npm run build
       - run: npm run integracao

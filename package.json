@@ -17,7 +17,8 @@
     "demo-ponte-g2": "node documentacao/demo-ponte-g2.cjs",
     "testar-ponte": "node --test testes/ponteG2.test.cjs testes/ponteDeltas.test.cjs testes/periodicNodeRed.test.cjs testes/ponteDiagnosticoProcesso.test.cjs",
     "mock-comandos-g2": "node documentacao/mock-comandos-g2.cjs",
-    "testar-mock-comandos": "node --test testes/mockComandosG2.test.cjs"
+    "testar-mock-comandos": "node --test testes/mockComandosG2.test.cjs",
+    "testar-adaptador-n2": "node --test testes/adaptadorProcessoN2.test.cjs"
   },
   "dependencies": {
     "react": "^19.2.0",
