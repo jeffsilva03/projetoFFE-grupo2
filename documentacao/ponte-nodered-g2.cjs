@@ -25,6 +25,10 @@ const TAGS = Object.freeze({
     'processo_sensorVacuoManipulador', 'processo_sensorVacuo',
     'processo_avancaEixoZ', 'processo_acionaVacuoManipulador',
     'processo_acionaVacuoMesa', 'processo_esteira1', 'processo_esteira2',
+    // Estados do S7 in do Processo fotografados no Node-RED real, SOMENTE leitura.
+    'processo_n2_aguardando', 'processo_n2_emergencia', 'processo_n2_manual', 'processo_n2_ocupado', 'processo_n2_cancelOP',
+    'processo_n2_finishOP', 'processo_n2_startOP', 'processo_n2_comutadorAutomatico', 'processo_n2_condicaoIniciar', 'processo_n2_emergenciaAtivada',
+    'processo_n2_homeGiro', 'processo_n2_homeVertical', 'processo_n2_servoGiro', 'processo_n2_servoVertical',
   ],
   MONTAGEM: [
     'montagem_segurancaOK', 'montagem_chaveAutomatico', 'montagem_botaoVerde',

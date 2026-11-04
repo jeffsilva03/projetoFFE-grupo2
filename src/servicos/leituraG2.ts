@@ -1,4 +1,5 @@
 import { tagsDiagnosticoProcesso } from '../dados/sinaisProcesso';
+import { tagsProcessoN2 } from '../dados/processoN2';
 import type { AmostraLeituraG2, EstacaoG2, IndicadoresLeituraG2 } from '../tipos/leituraG2';
 
 type SinalIhm = keyof IndicadoresLeituraG2;
@@ -66,6 +67,7 @@ export function lerAmostraG2(mensagem: string): AmostraLeituraG2 {
   ));
   if (estacao === 'PROCESSO') {
     for (const tag of tagsDiagnosticoProcesso) tags.add(tag);
+    for (const tag of tagsProcessoN2) tags.add(tag);
   }
   for (const tag of tags) {
     if (tag === undefined) continue;
