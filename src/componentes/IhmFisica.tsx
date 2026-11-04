@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
+import { estadoInicialBotoeira, reduzirBotoeiraDemo, type ComandoBotoeiraDemo, type EstadoBotoeiraDemo } from '../estado/botoeiraDemo';
 import {
   entradasFotografadas, saidasFotografadas, laminasFotografadas,
   destinosFotografados, eixosFotografados, formatarMilimetros,
@@ -108,14 +109,14 @@ function SaidasManuais() {
   </div>;
 }
 
-function BotoeiraFisica() {
+function BotoeiraFisica({ estado, comando }: { estado: EstadoBotoeiraDemo; comando: (tipo: ComandoBotoeiraDemo) => void }) {
   return <aside className="real-botoeira" aria-label="Reprodução da botoeira física">
     <div className="real-botoeira-topo"><div className="real-qr" aria-hidden="true"><i /><i /><i /><i /></div><div className="real-logo-grande"><CuboSmart /><b>SMART 4.0</b></div></div>
     <div className="real-comandos-externos">
       <div className="real-botao-externo"><span>SETUP</span><button disabled aria-label="Seletor SETUP — reprodução visual" className="real-comando-aro real-setup"><i /></button></div>
-      <div className="real-botao-externo"><span>START</span><button disabled aria-label="START — reprodução visual" className="real-comando-aro real-start" /></div>
-      <div className="real-botao-externo"><span>STOP</span><button disabled aria-label="STOP — reprodução visual" className="real-comando-aro real-stop" /></div>
-      <div className="real-botao-externo"><button disabled aria-label="RESET — reprodução visual" className="real-comando-aro real-reset" /><span>RESET</span></div>
+      <div className="real-botao-externo"><span>START</span><button type="button" aria-label="START — iniciar simulação local" title="Iniciar ciclo demonstrativo (não envia comando à máquina)" onClick={() => comando('START')} className={`real-comando-aro real-interativo real-start ${estado.status === 'OPERANDO' ? 'real-selecionado' : ''}`} /></div>
+      <div className="real-botao-externo"><span>STOP</span><button type="button" aria-label="STOP — parar simulação local" title="Parar ciclo demonstrativo (não envia comando à máquina)" onClick={() => comando('STOP')} className={`real-comando-aro real-interativo real-stop ${estado.status === 'PARADA' ? 'real-selecionado' : ''}`} /></div>
+      <div className="real-botao-externo"><button type="button" aria-label="RESET — reiniciar simulação local" title="Reiniciar estado da demonstração (não envia comando à máquina)" onClick={() => comando('RESET')} className="real-comando-aro real-interativo real-reset" /><span>RESET</span></div>
       <div className="real-botao-externo"><span className="real-rotulo-inferior">SEGURANÇA<br />OK</span><span className="real-comando-aro real-luz-verde" role="img" aria-label="Luz verde de segurança acesa na foto" /></div>
       <div className="real-botao-externo"><span className="real-rotulo-inferior">SEGURANÇA<br />ACIONADA</span><span className="real-comando-aro real-luz-vermelha" role="img" aria-label="Luz vermelha de segurança acesa na foto" /></div>
     </div>
@@ -129,13 +130,15 @@ function BotoeiraFisica() {
  */
 export function IhmFisica() {
   const [tela, definirTela] = useState<TelaFisica>('INICIO');
+  const [demo, executarDemo] = useReducer(reduzirBotoeiraDemo, estadoInicialBotoeira);
   const [agora, definirAgora] = useState(() => new Date());
   useEffect(() => {
     const relogio = window.setInterval(() => definirAgora(new Date()), 1000);
     return () => window.clearInterval(relogio);
   }, []);
   return <section className="real-area" aria-label="Réplica da estação de processo Smart 4.0">
-    <div className="real-aviso"><strong>RÉPLICA VISUAL DAS FOTOS</strong><span>Dados fotografados · Sem telemetria ao vivo · Comandos de movimento e segurança desabilitados</span></div>
+    <div className="real-aviso"><strong>RÉPLICA VISUAL DAS FOTOS</strong><span>START, STOP e RESET interativos em simulação local · Sem conexão com a máquina · Demais comandos industriais desabilitados</span></div>
+    <div className={`real-status-demonstracao ${demo.status === 'OPERANDO' ? 'operando' : 'parada'}`} role="status" aria-live="polite"><span className="real-status-ponto" aria-hidden="true" /><strong>DEMONSTRAÇÃO: {demo.status === 'OPERANDO' ? 'EM EXECUÇÃO' : 'PARADA'}</strong><span>{demo.mensagem}</span></div>
     <div className="real-rolagem"><div className="real-maquina">
       <div className="real-painel-hmi">
         <div className="real-siemens-borda"><strong>SIEMENS</strong><span>SIMATIC HMI</span><em>TOUCH</em></div>
@@ -151,7 +154,7 @@ export function IhmFisica() {
         </div>
         <div className="real-teclas">{Array.from({ length: 8 }, (_, i) => <div key={i}><small>F{i+1}</small><span /></div>)}</div>
       </div>
-      <BotoeiraFisica />
+      <BotoeiraFisica estado={demo} comando={executarDemo} />
     </div></div>
     <p className="real-rodape">Telas reproduzidas: menu inicial, diagnóstico, posições dos eixos e manual. A futura ligação com as tags do CLP depende da lista de endereços validada pelo professor.</p>
   </section>;

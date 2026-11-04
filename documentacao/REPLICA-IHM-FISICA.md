@@ -21,3 +21,11 @@ Telas disponíveis:
 
 ## Conferência local
 Na branch Sprint2: executar \`npm ci\`, \`npm run verificar\`, \`npm run testar\`, \`npm run testar-ponte\` e \`npm run build\`, seguido de \`npm run dev\` para navegar na réplica.
+
+## Interatividade da botoeira virtual
+- START: coloca **somente o estado demonstrativo da interface** em execução.
+- STOP: interrompe o ciclo demonstrativo.
+- RESET: retorna o estado demonstrativo para parada e libera novo START.
+- Um indicador de estado acima da réplica exibe o resultado de cada clique.
+- Sinaleiros de segurança e leituras da IHM são representações fotográficas e **não são validados por essa simulação**.
+- Comandos do CLP, Node-RED, servo, JOG, setup e parada de emergência da máquina real continuam indisponíveis; a demonstração não substitui o circuito de segurança.

@@ -92,3 +92,34 @@
 .real-rodape { margin:12px 0 0; font-size:12px; line-height:1.6; color:#b1b9c3; }
 @media(max-width:1100px){.real-maquina{min-width:1040px}.real-rolagem{border-radius:5px}}
 @media(prefers-reduced-motion:reduce){.real-menu svg{transition:none}}
+
+/* START, STOP e RESET operam exclusivamente o estado demonstrativo em memória. */
+.real-area .real-comando-aro.real-interativo {
+  cursor:pointer; pointer-events:auto; touch-action:manipulation;
+  transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;
+}
+.real-area .real-comando-aro.real-interativo:hover {
+  filter:brightness(1.13);
+  box-shadow:0 0 0 2px #5b6868,0 0 0 5px rgba(43,77,89,.24),1px 3px 4px #5558;
+}
+.real-area .real-comando-aro.real-interativo:active {
+  transform:translateY(2px) scale(.96);
+}
+.real-area .real-comando-aro.real-interativo:focus-visible {
+  outline:3px solid #226ac3; outline-offset:6px;
+}
+.real-area .real-comando-aro.real-interativo.real-selecionado {
+  box-shadow:0 0 0 2px #5b6868,0 0 0 5px #f9cc38aa,0 2px 9px #0006;
+}
+.real-status-demonstracao {
+  display:flex; align-items:center; flex-wrap:wrap; gap:7px 10px;
+  margin-bottom:12px; padding:9px 13px; border:1px solid #445d79;
+  border-radius:6px; background:#1d2a3b; color:#e4edf7; font-size:12px;
+}
+.real-status-demonstracao strong { font-size:11px; letter-spacing:.04em; }
+.real-status-demonstracao > span:last-child { color:#c9d6e3; }
+.real-status-ponto { width:9px; height:9px; border-radius:50%; background:#e8b44c; box-shadow:0 0 0 3px #e8b44c24; }
+.real-status-demonstracao.operando .real-status-ponto { background:#5fd1ab; box-shadow:0 0 0 3px #5fd1ab23; }
+@media (prefers-reduced-motion:reduce) {
+  .real-area .real-comando-aro.real-interativo { transition:none; }
+}
