@@ -20,7 +20,7 @@ function functionNode(payload,config={}){
     node:{warn:x=>avisos.push(x),error:x=>erros.push(x),status:x=>status.push(x)},
     URL,
   };
-  return {resultado:vm.runInNewContext(codigo,ctx,{timeout:300}),avisos,erros,status};
+  return {resultado:vm.runInNewContext('(function(){\n'+codigo+'\n})()',ctx,{timeout:300}),avisos,erros,status};
 }
 test('mapeamento documentado contém 14 chaves sem comandos da máquina',()=>{
   assert.equal(Object.keys(MAPA_PROCESSO_N2).length,14);
