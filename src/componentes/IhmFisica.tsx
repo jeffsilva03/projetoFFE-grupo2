@@ -8,6 +8,7 @@ import { entradasProcesso, saidasProcesso, interpretarSinaisProcesso } from '../
 import { usarPonteProcesso } from '../estado/usarPonteProcesso';
 import { usarTesteComandos } from '../estado/usarTesteComandos';
 import { PainelTesteComandos } from './PainelTesteComandos';
+import { PainelLeituraProcessoN2 } from './PainelLeituraProcessoN2';
 import type { ComandoTeste } from '../servicos/protocoloTesteComandos';
 import type { AmostraLeituraG2 } from '../tipos/leituraG2';
 import '../estilos/ihm-fisica.css';
@@ -325,6 +326,8 @@ export function IhmFisica() {
       <small>Conectar à ponte não comprova que a fonte seja a máquina real. Não existe envio de comandos.</small>
     </div>}
     {origem==='TESTE' && <PainelTesteComandos teste={teste} />}
+    {origem==='PONTE' && <PainelLeituraProcessoN2 amostra={amostra}
+      conectada={ponte.conexao==='ABERTA'} atualizada={ponte.atualizada} />}
     {origem==='SIMULACAO' && <div className={'real-status-demonstracao '+(demo.status==='OPERANDO'?'operando':'parada')} role="status" aria-live="polite">
       <span className="real-status-ponto" aria-hidden="true" />
       <strong>DEMO: {demo.status==='OPERANDO'?'EM EXECUÇÃO':'PARADA'} · {demo.modo}

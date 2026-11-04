@@ -1,0 +1,16 @@
+/* Painel específico dos 14 estados N2 capturados do Node-RED, não comandos. */
+.n2-painel { display:flex; flex-direction:column; gap:12px; padding:15px; margin:12px 0;
+  border-radius:8px; border:1px solid #526981; background:#1e2a3c; color:#e9f0f9; }
+.n2-cabecalho { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px; }
+.n2-cabecalho strong { font-size:12px; letter-spacing:.04em; }
+.n2-cabecalho p,.n2-nota { font-size:11px; line-height:1.6; margin:5px 0 0; color:#bccad8; }
+.n2-cabecalho code { color:#daeaff; }
+.n2-conexao { border:1px solid #77828f; border-radius:30px; padding:6px 10px; font-size:11px; font-weight:700; }
+.n2-conexao.n2-atual { border-color:#8fc7e5; background:#24465f; }
+.n2-grade { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.n2-linha { display:flex; justify-content:space-between; align-items:center; gap:12px;
+  min-width:0; padding:8px 10px; border:1px solid #4e627d; border-radius:6px; background:#293a50; }
+.n2-linha span { font-size:11px; line-height:1.35; }
+.n2-linha b { font-size:10px; white-space:nowrap; letter-spacing:.03em; }
+.n2-ligado { color:#a5ebc4; }.n2-desligado { color:#d5e2f0; }.n2-desconhecido { color:#f0ce8d; }
+@media(max-width:800px){.n2-grade{grid-template-columns:1fr}}
