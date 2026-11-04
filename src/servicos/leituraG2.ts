@@ -1,3 +1,4 @@
+import { tagsDiagnosticoProcesso } from '../dados/sinaisProcesso';
 import type { AmostraLeituraG2, EstacaoG2, IndicadoresLeituraG2 } from '../tipos/leituraG2';
 
 type SinalIhm = keyof IndicadoresLeituraG2;
@@ -58,7 +59,15 @@ export function lerAmostraG2(mensagem: string): AmostraLeituraG2 {
   if (!estaObjeto(bruto.sinais)) throw new Error('Pacote sem sinais.');
   const estacao = bruto.estacao as EstacaoG2;
   const sinais: Record<string, boolean | null> = {};
-  for (const tag of Object.values(mapeamentoG2[estacao])) {
+  // A IHM física da estação de Processo também lê as entradas/saídas do DB101.
+  // Mantemos tags conhecidas sem inventar estados para sinais ausentes.
+  const tags = new Set<string>(Object.values(mapeamentoG2[estacao]).filter(
+    (tag): tag is string => typeof tag === 'string',
+  ));
+  if (estacao === 'PROCESSO') {
+    for (const tag of tagsDiagnosticoProcesso) tags.add(tag);
+  }
+  for (const tag of tags) {
     if (tag === undefined) continue;
     const valor = bruto.sinais[tag];
     if (valor !== undefined && valor !== null && typeof valor !== 'boolean') {
