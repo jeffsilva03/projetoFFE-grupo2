@@ -119,7 +119,7 @@ function BotoeiraFisica() {
       <div className="real-botao-externo"><span className="real-rotulo-inferior">SEGURANÇA<br />OK</span><span className="real-comando-aro real-luz-verde" role="img" aria-label="Luz verde de segurança acesa na foto" /></div>
       <div className="real-botao-externo"><span className="real-rotulo-inferior">SEGURANÇA<br />ACIONADA</span><span className="real-comando-aro real-luz-vermelha" role="img" aria-label="Luz vermelha de segurança acesa na foto" /></div>
     </div>
-    <div className="real-emergencia"><span>DESLIGA<br />EMERGÊNCIA</span><button disabled aria-label="Botão de emergência — reprodução visual" /></div>
+    <div className="real-emergencia"><span className="real-emergencia-legenda cima">DESLIGA</span><button type="button" disabled aria-label="Botão de emergência — reprodução visual" title="Réplica visual, não aciona a máquina" /><span className="real-emergencia-legenda baixo">EMERGÊNCIA</span></div>
   </aside>;
 }
 
@@ -145,7 +145,7 @@ export function IhmFisica() {
               <SimboloMenu tipo={id} /><strong>{id === 'DIAGNOSTICO' ? 'DIAGNÓSTICO' : id === 'CONFIGURACOES' ? 'CONFIGURAÇÕES' : 'MANUAL'}</strong>
             </button>)}
           </nav> : <div className="real-tela-interna">
-            <button className="real-voltar" aria-label="Voltar ao menu inicial" onClick={() => definirTela('INICIO')}>❮❮</button>
+            <button type="button" className="real-voltar" aria-label="Voltar ao menu inicial" title="Voltar ao menu inicial" onClick={() => definirTela('INICIO')}><svg viewBox="0 0 100 80" fill="none" aria-hidden="true" focusable="false"><path d="M46 8L14 40L46 72M84 8L52 40L84 72" stroke="currentColor" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             {tela === 'DIAGNOSTICO' ? <DiagnosticoFisico /> : tela === 'CONFIGURACOES' ? <ConfiguracoesFisicas /> : <SaidasManuais />}
           </div>}
         </div>
