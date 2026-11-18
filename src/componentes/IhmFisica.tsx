@@ -300,7 +300,8 @@ export function IhmFisica() {
     return ()=>window.clearInterval(relogio);
   },[]);
   function mudarFonte(proxima:OrigemDiagnostico) {
-    if(proxima!=='PONTE') ponte.desconectar();
+    // A ponte de leitura é compartilhada entre as telas e continua aberta;
+    // os valores só aparecem quando a fonte "Ponte" está selecionada.
     if(proxima!=='TESTE') teste.desconectar();
     definirOrigem(proxima);
   }
@@ -316,9 +317,9 @@ export function IhmFisica() {
       <label>WebSocket da ponte de leitura (não do CLP)
         <input aria-label="Endereço da ponte de leitura do Processo" type="url" spellCheck={false}
           value={ponte.endereco} onChange={e=>ponte.definirEndereco(e.target.value)}
-          disabled={ponte.conexao==='ABERTA'||ponte.conexao==='CONECTANDO'} />
+          disabled={ponte.ativa} />
       </label>
-      {ponte.conexao==='ABERTA'||ponte.conexao==='CONECTANDO'
+      {ponte.ativa
         ?<button type="button" onClick={ponte.desconectar}>Desconectar</button>
         :<button type="button" onClick={ponte.conectar}>Conectar ponte G2</button>}
       <p role="status">{ponte.mensagem} {ponte.atualizada
