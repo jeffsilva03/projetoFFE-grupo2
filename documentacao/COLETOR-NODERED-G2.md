@@ -70,6 +70,18 @@ Para imitar a Function antiga (503 fixo): `npm.cmd run coletor-n2 -- --simulado 
 
 O arquivo `evidencias-nodered.jsonl` guarda cada resposta do Node-RED com o horário local. É a evidência pedida no roteiro ("status, JSON e horário"). Não contém tokens.
 
+## Se a rota responder 404 (aba G2 inexistente)
+
+Foi o que aconteceu em 18/11: `Cannot GET /api/g2/processo/telemetria`. O arquivo [`nodered-aba-g2-telemetria.json`](nodered-aba-g2-telemetria.json) cria **só** a aba "G2 - Telemetria" (link in, duas Functions, HTTP in/out). Não tem `s7 in`, `s7 out` nem escrita no CLP. Testado num Node-RED 4.1: os nós existentes ficam intactos.
+
+Com autorização do professor:
+
+1. **Backup:** Menu ☰ → Exportar → Todos os fluxos → Baixar.
+2. Menu ☰ → Importar → selecionar o arquivo → Importar. Aparece a aba "G2 - Telemetria".
+3. Deploy em **Nós modificados**. A rota passa a responder 503 `sem_dados_recentes` em vez de 404.
+4. Na aba PROCESSO, arrastar um nó **link out**, ligar a saída do `s7 in` a ele (mantendo as ligações que já existem), abrir o nó e marcar "G2 - Receber S7 Processo". Deploy em **Nós modificados**. É a única mudança fora da aba G2.
+5. Conferir o status embaixo de "G2 - Registrar Sinais N2": verde (`14/14 sinais`) ou amarelo (`nenhum dos 14 campos; chaves: ...`, nomes das variáveis diferentes).
+
 ## Garantias
 
 - Só `GET` no Node-RED, sem redirecionamento, timeout de 2 s, no mínimo 500 ms entre consultas.
