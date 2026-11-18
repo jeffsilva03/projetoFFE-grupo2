@@ -37,6 +37,12 @@ Confira as instruções e a função para instalar futuramente no Node-RED em [P
 
 Para checar os testes dessa ponte: `npm.cmd run testar-ponte`.
 
+### Ler o Node-RED da bancada (Sprint 3)
+
+`npm.cmd run coletor-n2` consulta, só por GET, a rota `/api/g2/processo/telemetria` do Node-RED da bancada e repassa os 14 sinais do Processo à ponte local, sem alterar o Node-RED. Para testar em casa: `npm.cmd run coletor-n2 -- --simulado`. Passo a passo e leitura dos diagnósticos em [COLETOR-NODERED-G2.md](documentacao/COLETOR-NODERED-G2.md). Testes: `npm.cmd run testar-coletor`.
+
+A conexão da IHM com a ponte agora é única e compartilhada entre as telas: trocar de visão não derruba a leitura, e uma queda reconecta sozinha (1 s a 32 s).
+
 Para publicar a interface online, siga [Hospedar no Render](documentacao/RENDER.md).
 
 Frontend em **React + TypeScript + Vite**, com conexão autenticada ao simulador WebSocket fornecido pelo professor. Mantém a interface Siemens, a botoeira e a opção de simulação local.
