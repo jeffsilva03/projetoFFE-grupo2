@@ -1,0 +1,331 @@
+[
+    {
+        "id": "9a2d0e51c7b34f10",
+        "type": "tab",
+        "label": "G2 - Telemetria",
+        "disabled": false,
+        "info": "Grupo 2 (FFE) — SOMENTE LEITURA. Recebe cópia do s7 in da aba PROCESSO por link e expõe GET /api/g2/processo/telemetria. Não tem s7 out nem escrita no CLP."
+    },
+    {
+        "id": "3f8c1a7e2b9d4c61",
+        "type": "comment",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 · somente leitura · sem escrita no CLP",
+        "info": "Para receber dados: na aba PROCESSO, ligue a saída do 's7 in' a um nó 'link out' apontando para 'G2 - Receber S7 Processo'. Essa ligação é a única mudança fora desta aba.",
+        "x": 200,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "b7e41d02a9c35f88",
+        "type": "link in",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Receber S7 Processo",
+        "links": [
+            "c95d55a5cd302afd"
+        ],
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "5c2e9f41d8a07b36"
+            ]
+        ]
+    },
+    {
+        "id": "5c2e9f41d8a07b36",
+        "type": "function",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Registrar Sinais N2",
+        "func": "// G2 - SOMENTE LEITURA. Guarda os sinais booleanos do s7 in do Processo com o horário da observação.\nconst CAMPOS = [\n    // DB2 (interface com o MES)\n    'recebidoOP', 'cancelOP', 'finishOP', 'startOP', 'ocupado', 'aguardando', 'manual',\n    'emergencia', 'emergenciaAtivada', 'comutadorAutomatico', 'homeX', 'homeY', 'servoX', 'servoY', 'condicaoIniciar',\n    // DB101 (entradas e saídas da estação Processo)\n    'segurancaOK', 'eixoZAvancado', 'eixoZRecuado', 'sensorVacuoManipulador', 'sensorVacuo', 'chaveAutomatico',\n    'botaoVerde', 'botaoVermelho', 'atuadoresPosicaoOK', 'atuadoresOcupado', 'avancaEixoZ', 'acionaVacuoManipulador',\n    'acionaVacuoMesa', 'esteira1', 'esteira2', 'stopper1', 'stopper2', 'triggerAtuador'\n];\nconst p = msg.payload;\nif (p === null || typeof p !== 'object' || Array.isArray(p)) {\n    node.status({ fill: 'red', shape: 'ring', text: 'payload não é objeto' });\n    return null;\n}\nconst cache = global.get('g2_n2_cache_leitura') || {};\nconst agora = Date.now();\nlet recebidos = 0;\nfor (const campo of CAMPOS) {\n    if (Object.prototype.hasOwnProperty.call(p, campo) && typeof p[campo] === 'boolean') {\n        cache[campo] = { valor: p[campo], observadoEm: agora };\n        recebidos++;\n    }\n}\nif (recebidos > 0) {\n    global.set('g2_n2_cache_leitura', cache);\n    node.status({ fill: 'green', shape: 'dot', text: recebidos + '/' + CAMPOS.length + ' sinais às ' + new Date(agora).toLocaleTimeString() });\n} else {\n    node.status({ fill: 'yellow', shape: 'ring', text: 'nenhum campo conhecido; chaves: ' + Object.keys(p).slice(0, 4).join(',') });\n}\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e19d6b3a4f2c8075",
+        "type": "http in",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Consultar Processo",
+        "url": "/api/g2/processo/telemetria",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "a4f07c3e91b26d58"
+            ]
+        ]
+    },
+    {
+        "id": "a4f07c3e91b26d58",
+        "type": "function",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Leitura Segura",
+        "func": "// G2 - SOMENTE LEITURA. GET /api/g2/processo/telemetria: sinais observados nos últimos 3 s.\nconst CAMPOS = [\n    // DB2 (interface com o MES)\n    'recebidoOP', 'cancelOP', 'finishOP', 'startOP', 'ocupado', 'aguardando', 'manual',\n    'emergencia', 'emergenciaAtivada', 'comutadorAutomatico', 'homeX', 'homeY', 'servoX', 'servoY', 'condicaoIniciar',\n    // DB101 (entradas e saídas da estação Processo)\n    'segurancaOK', 'eixoZAvancado', 'eixoZRecuado', 'sensorVacuoManipulador', 'sensorVacuo', 'chaveAutomatico',\n    'botaoVerde', 'botaoVermelho', 'atuadoresPosicaoOK', 'atuadoresOcupado', 'avancaEixoZ', 'acionaVacuoManipulador',\n    'acionaVacuoMesa', 'esteira1', 'esteira2', 'stopper1', 'stopper2', 'triggerAtuador'\n];\nconst VALIDADE_MS = 3000;\nconst cache = global.get('g2_n2_cache_leitura') || {};\nconst agora = Date.now();\nconst sinais = {};\nconst observadosEm = {};\nfor (const campo of CAMPOS) {\n    const item = cache[campo];\n    if (!item || typeof item.valor !== 'boolean' || typeof item.observadoEm !== 'number' || !isFinite(item.observadoEm)) continue;\n    const idade = agora - item.observadoEm;\n    if (idade < 0 || idade > VALIDADE_MS) continue;\n    sinais[campo] = item.valor;\n    observadosEm[campo] = new Date(item.observadoEm).toISOString();\n}\nconst temDados = Object.keys(sinais).length > 0;\nmsg.statusCode = temDados ? 200 : 503;\nmsg.headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };\nmsg.payload = {\n    status: temDados ? 'leitura_parcial' : 'sem_dados_recentes',\n    estacao: 'PROCESSO',\n    timestampConsulta: new Date(agora).toISOString(),\n    dadosValidos: temDados,\n    sinais,\n    observadosEm\n};\nnode.status({ fill: temDados ? 'green' : 'grey', shape: 'dot', text: msg.statusCode + ' · ' + Object.keys(sinais).length + ' sinais' });\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 180,
+        "wires": [
+            [
+                "6d3b82f05e1c9a47"
+            ]
+        ]
+    },
+    {
+        "id": "6d3b82f05e1c9a47",
+        "type": "http response",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Resposta Telemetria",
+        "statusCode": "",
+        "headers": {},
+        "x": 660,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "c1a7e3f0b2d94e11",
+        "type": "comment",
+        "z": "9a2d0e51c7b34f10",
+        "name": "TESTE DE ESCRITA · STOP (pulso 500 ms) · só com supervisão",
+        "info": "Clique no botão do inject para mandar botaoVermelho = true por 500 ms e voltar a false. Ligue a saída do trigger a um nó 's7 out' configurado no PLC do Processo, variável botaoVermelho.",
+        "x": 330,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "d2b8f4a1c3e05f22",
+        "type": "inject",
+        "z": "9a2d0e51c7b34f10",
+        "name": "G2 - Pulso STOP",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 380,
+        "wires": [
+            [
+                "e3c9a5b2d4f16a33"
+            ]
+        ]
+    },
+    {
+        "id": "e3c9a5b2d4f16a33",
+        "type": "trigger",
+        "z": "9a2d0e51c7b34f10",
+        "name": "true → 500 ms → false",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "500",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 420,
+        "y": 380,
+        "wires": [
+            [
+                "058fa944501046db"
+            ]
+        ]
+    },
+    {
+        "id": "058fa944501046db",
+        "type": "s7 out",
+        "z": "9a2d0e51c7b34f10",
+        "endpoint": "a19f9d2c687d2cee",
+        "variable": "botaoVermelho",
+        "name": "",
+        "x": 420,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "a19f9d2c687d2cee",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.150.20",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapter": "",
+        "busaddr": "2",
+        "cycletime": "200",
+        "timeout": "60000",
+        "name": "",
+        "vartable": [
+            {
+                "addr": "DB2,X0.0",
+                "name": "recebidoOP"
+            },
+            {
+                "addr": "DB2,I2",
+                "name": "numeroOP"
+            },
+            {
+                "addr": "DB2,X4.0",
+                "name": "cancelOP"
+            },
+            {
+                "addr": "DB2,X4.1",
+                "name": "finishOP"
+            },
+            {
+                "addr": "DB2,X4.2",
+                "name": "startOP"
+            },
+            {
+                "addr": "DB2,X6.0",
+                "name": "ocupado"
+            },
+            {
+                "addr": "DB2,X6.1",
+                "name": "aguardando"
+            },
+            {
+                "addr": "DB2,X6.2",
+                "name": "manual"
+            },
+            {
+                "addr": "DB2,X6.3",
+                "name": "emergencia"
+            },
+            {
+                "addr": "DB2,X8.0",
+                "name": "emergenciaAtivada"
+            },
+            {
+                "addr": "DB2,X8.1",
+                "name": "comutadorAutomatico"
+            },
+            {
+                "addr": "DB2,X8.2",
+                "name": "homeX"
+            },
+            {
+                "addr": "DB2,X8.3",
+                "name": "homeY"
+            },
+            {
+                "addr": "DB2,X8.4",
+                "name": "servoX"
+            },
+            {
+                "addr": "DB2,X8.5",
+                "name": "servoY"
+            },
+            {
+                "addr": "DB2,X8.6",
+                "name": "condicaoIniciar"
+            },
+            {
+                "addr": "DB101,X0.1",
+                "name": "segurancaOK"
+            },
+            {
+                "addr": "DB101,X0.2",
+                "name": "eixoZAvancado"
+            },
+            {
+                "addr": "DB101,X0.3",
+                "name": "eixoZRecuado"
+            },
+            {
+                "addr": "DB101,X0.4",
+                "name": "sensorVacuoManipulador"
+            },
+            {
+                "addr": "DB101,X0.5",
+                "name": "sensorVacuo"
+            },
+            {
+                "addr": "DB101,X0.6",
+                "name": "chaveAutomatico"
+            },
+            {
+                "addr": "DB101,X0.7",
+                "name": "botaoVerde"
+            },
+            {
+                "addr": "DB101,X1.0",
+                "name": "botaoVermelho"
+            },
+            {
+                "addr": "DB101,X8.0",
+                "name": "atuadoresPosicaoOK"
+            },
+            {
+                "addr": "DB101,X8.1",
+                "name": "atuadoresOcupado"
+            },
+            {
+                "addr": "DB101,X20.0",
+                "name": "avancaEixoZ"
+            },
+            {
+                "addr": "DB101,X20.1",
+                "name": "acionaVacuoManipulador"
+            },
+            {
+                "addr": "DB101,X20.2",
+                "name": "acionaVacuoMesa"
+            },
+            {
+                "addr": "DB101,X20.3",
+                "name": "esteira1"
+            },
+            {
+                "addr": "DB101,X20.4",
+                "name": "esteira2"
+            },
+            {
+                "addr": "DB101,X20.5",
+                "name": "stopper1"
+            },
+            {
+                "addr": "DB101,X20.6",
+                "name": "stopper2"
+            },
+            {
+                "addr": "DB101,X26.0",
+                "name": "triggerAtuador"
+            },
+            {
+                "addr": "DB101,W28",
+                "name": "posicaoAtuador"
+            }
+        ]
+    }
+]
