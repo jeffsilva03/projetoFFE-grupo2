@@ -1,0 +1,60 @@
+[
+  {
+    "id": "c1a7e3f0b2d94e11",
+    "type": "comment",
+    "z": "9a2d0e51c7b34f10",
+    "name": "TESTE DE ESCRITA · STOP (pulso 500 ms) · só com supervisão",
+    "info": "Clique no botão do inject para mandar botaoVermelho = true por 500 ms e voltar a false. Ligue a saída do trigger a um nó 's7 out' configurado no PLC do Processo, variável botaoVermelho.",
+    "x": 290,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "d2b8f4a1c3e05f22",
+    "type": "inject",
+    "z": "9a2d0e51c7b34f10",
+    "name": "G2 - Pulso STOP",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 160,
+    "y": 320,
+    "wires": [
+      [
+        "e3c9a5b2d4f16a33"
+      ]
+    ]
+  },
+  {
+    "id": "e3c9a5b2d4f16a33",
+    "type": "trigger",
+    "z": "9a2d0e51c7b34f10",
+    "name": "true → 500 ms → false",
+    "op1": "true",
+    "op2": "false",
+    "op1type": "bool",
+    "op2type": "bool",
+    "duration": "500",
+    "extend": false,
+    "overrideDelay": false,
+    "units": "ms",
+    "reset": "",
+    "bytopic": "all",
+    "topic": "topic",
+    "outputs": 1,
+    "x": 380,
+    "y": 320,
+    "wires": [
+      []
+    ]
+  }
+]
