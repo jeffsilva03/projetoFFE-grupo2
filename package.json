@@ -21,7 +21,9 @@
     "testar-adaptador-n2": "node --test testes/adaptadorProcessoN2.test.cjs",
     "coletor-n2": "node documentacao/coletor-nodered-g2.cjs",
     "simulador-nodered": "node documentacao/simulador-nodered-g2.cjs",
-    "testar-coletor": "node --test testes/coletorNodeRed.test.cjs"
+    "testar-coletor": "node --test testes/coletorNodeRed.test.cjs",
+    "simulador-comandos": "node documentacao/simulador-comandos-s3.cjs",
+    "testar-comandos": "node --import tsx --test testes/comandosS3.test.ts && node --test testes/simuladorComandosS3.test.cjs"
   },
   "dependencies": {
     "react": "^19.2.0",

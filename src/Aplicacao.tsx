@@ -7,16 +7,20 @@ import { IndicadorEstado } from './componentes/IndicadorEstado';
 import { LeituraG2 } from './componentes/LeituraG2';
 import { LeituraQuatroEstacoes } from './componentes/LeituraQuatroEstacoes';
 import { IhmFisica } from './componentes/IhmFisica';
+import { ProvedorComandos } from './comandos/ProvedorComandos';
+import { PainelComandos } from './componentes/comandos/PainelComandos';
+import { BotaoEmergencia } from './componentes/comandos/BotaoEmergencia';
 import { Icone, SimboloSmart } from './componentes/Icone';
 import './estilos/tema-professor.css';
 import './estilos/painel.css';
 import './estilos/leitura-g2.css';
 import './estilos/ponte-g2.css';
+import './estilos/comandos-s3.css';
 
 export function Aplicacao() {
   const { maquina, enviar, fonte, conectar, desconectar, usarLocal } = usarMaquina();
   const [hora, alterarHora] = useState(new Date());
-  const [visao, alterarVisao] = useState<'REAL' | 'SIMULADOR' | 'LEITURA' | 'PONTE'>('REAL');
+  const [visao, alterarVisao] = useState<'REAL' | 'SIMULADOR' | 'LEITURA' | 'PONTE' | 'COMANDOS'>('REAL');
   const [telaCheia, alterarTelaCheia] = useState(false);
   const raiz = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -25,15 +29,16 @@ export function Aplicacao() {
     document.addEventListener('fullscreenchange', acompanhar);
     return () => { window.clearInterval(temporizador); document.removeEventListener('fullscreenchange', acompanhar); };
   }, []);
-  return <div className="ihm-smart40" ref={raiz}>
-    <header className="ihm-barra-superior"><a className="ihm-identidade" href="#painel" aria-label="Ir para o painel de controle"><SimboloSmart /><div><strong>SMART <b>4.0</b></strong><span>Estação de controle</span></div></a><div className="ihm-contexto"><span>GRUPO 02</span><i /><span>IHM SIEMENS</span></div><div className="ihm-ferramentas"><span className={`ihm-simulacao ${fonte.estadoConexao === 'CONECTADO' ? 'conectado' : ''}`}><i />{visao === 'REAL' ? 'Réplica visual · sem comandos reais' : visao === 'PONTE' ? 'Ponte G2 · 4 estações' : visao === 'LEITURA' ? 'Leitura de teste G2' : nomesConexao[fonte.estadoConexao]}</span>{document.fullscreenEnabled && <button aria-label={telaCheia ? 'Sair da tela cheia' : 'Abrir tela cheia'} onClick={async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await raiz.current?.requestFullscreen(); } catch { /* A interface continua disponível caso o navegador bloqueie. */ } }}><Icone nome="expandir" tamanho={19} /></button>}</div></header>
+  return <ProvedorComandos><div className="ihm-smart40" ref={raiz}>
+    <header className="ihm-barra-superior"><a className="ihm-identidade" href="#painel" aria-label="Ir para o painel de controle"><SimboloSmart /><div><strong>SMART <b>4.0</b></strong><span>Estação de controle</span></div></a><div className="ihm-contexto"><span>GRUPO 02</span><i /><span>IHM SIEMENS</span></div><div className="ihm-ferramentas"><span className={`ihm-simulacao ${fonte.estadoConexao === 'CONECTADO' ? 'conectado' : ''}`}><i />{visao === 'REAL' ? 'Réplica visual · sem comandos reais' : visao === 'PONTE' ? 'Ponte G2 · 4 estações' : visao === 'LEITURA' ? 'Leitura de teste G2' : visao === 'COMANDOS' ? 'Comandos · simulador' : nomesConexao[fonte.estadoConexao]}</span>{document.fullscreenEnabled && <button aria-label={telaCheia ? 'Sair da tela cheia' : 'Abrir tela cheia'} onClick={async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await raiz.current?.requestFullscreen(); } catch { /* A interface continua disponível caso o navegador bloqueie. */ } }}><Icone nome="expandir" tamanho={19} /></button>}</div></header>
     <main className="ihm-principal" id="painel">
-      <div className="ihm-titulo-pagina"><div><span className="ihm-sobretitulo">PAINEL DO OPERADOR</span><h1>{visao === 'REAL' ? 'IHM física Siemens · Smart 4.0' : visao === 'PONTE' ? 'Monitoramento das quatro estações' : visao === 'LEITURA' ? 'Leitura dos sinais do G2' : 'Controle da estação'}</h1><p>{visao === 'REAL' ? 'Reprodução das telas fotografadas da máquina e de sua botoeira, sem comandos reais.' : visao === 'PONTE' ? 'Leitura de Estoque, Processo, Montagem e Expedição por uma única ponte.' : visao === 'LEITURA' ? 'Acompanhe sinais de teste com os nomes das variáveis do Node-RED.' : 'Interface digital da IHM e da botoeira de segurança.'}</p></div><div className="ihm-estado-global"><span>ESTADO GLOBAL</span>{visao !== 'SIMULADOR' ? <span className="ihm-etiqueta neutro">{visao === 'REAL' ? 'Demonstração visual' : 'Somente leitura'}</span> : fonte.disponivel ? <IndicadorEstado estado={maquina.estado} /> : <span className="ihm-etiqueta neutro">Estado indisponível</span>}</div></div>
+      <div className="ihm-titulo-pagina"><div><span className="ihm-sobretitulo">PAINEL DO OPERADOR</span><h1>{visao === 'REAL' ? 'IHM física Siemens · Smart 4.0' : visao === 'PONTE' ? 'Monitoramento das quatro estações' : visao === 'LEITURA' ? 'Leitura dos sinais do G2' : visao === 'COMANDOS' ? 'Botoeira de comando · Sprint 3' : 'Controle da estação'}</h1><p>{visao === 'REAL' ? 'Reprodução das telas fotografadas da máquina e de sua botoeira, sem comandos reais.' : visao === 'PONTE' ? 'Leitura de Estoque, Processo, Montagem e Expedição por uma única ponte.' : visao === 'LEITURA' ? 'Acompanhe sinais de teste com os nomes das variáveis do Node-RED.' : visao === 'COMANDOS' ? 'Start, Stop, Reset e emergência com confirmação pela telemetria, testados no simulador.' : 'Interface digital da IHM e da botoeira de segurança.'}</p></div><div className="ihm-estado-global"><span>ESTADO GLOBAL</span>{visao !== 'SIMULADOR' ? <span className="ihm-etiqueta neutro">{visao === 'REAL' ? 'Demonstração visual' : visao === 'COMANDOS' ? 'Comandos · simulador' : 'Somente leitura'}</span> : fonte.disponivel ? <IndicadorEstado estado={maquina.estado} /> : <span className="ihm-etiqueta neutro">Estado indisponível</span>}</div></div>
       <nav className="ihm-escolha-fonte" aria-label="Ambientes do Grupo 2">
         <button aria-pressed={visao === 'REAL'} onClick={() => { usarLocal(); alterarVisao('REAL'); }}>Sprint 2 · IHM real (réplica)</button>
         <button aria-pressed={visao === 'SIMULADOR'} onClick={() => alterarVisao('SIMULADOR')}>Sprint 1 · Simulador</button>
         <button aria-pressed={visao === 'LEITURA'} onClick={() => { usarLocal(); alterarVisao('LEITURA'); }}>Sprint 2 · Leitura de sinais</button>
         <button aria-pressed={visao === 'PONTE'} onClick={() => { usarLocal(); alterarVisao('PONTE'); }}>Sprint 2 · Ponte Node-RED</button>
+        <button aria-pressed={visao === 'COMANDOS'} onClick={() => { usarLocal(); alterarVisao('COMANDOS'); }}>Sprint 3 · Comandos</button>
       </nav>
       {visao === 'REAL' ? <IhmFisica /> : visao === 'SIMULADOR' ? <>
       <ConexaoSimulador fonte={fonte} conectar={conectar} desconectar={desconectar} usarLocal={usarLocal} />
@@ -42,8 +47,9 @@ export function Aplicacao() {
         <div className="ihm-equipamento"><PainelIhm maquina={maquina} enviar={enviar} fonte={fonte} /><Botoeira maquina={maquina} enviar={enviar} fonte={fonte} /></div>
         <div className={`ihm-feedback ${maquina.estado === 'EMERGENCIA' ? 'emergencia' : maquina.estado === 'FALHA_SEGURANCA' ? 'falha' : ''}`}><div className="ihm-feedback-icone"><Icone nome={maquina.estado === 'EMERGENCIA' || maquina.estado === 'FALHA_SEGURANCA' ? 'alarme' : 'informacao'} tamanho={18} /></div><div><span>MENSAGEM DO SISTEMA</span><p role="status" aria-live="polite">{maquina.mensagem}</p></div><time dateTime={hora.toISOString()}>{hora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</time></div>
       </div>
-      </> : visao === 'LEITURA' ? <LeituraG2 /> : <LeituraQuatroEstacoes />}
-      <footer className="ihm-rodape-pagina"><span><Icone nome="escudo" tamanho={14} />{visao === 'REAL' ? 'Réplica visual sem comunicação com a planta · Comandos desabilitados' : visao === 'PONTE' ? 'Ponte G2 · Somente leitura · Conexão à planta ainda não homologada' : visao === 'LEITURA' ? 'Aquisição G2 · Fonte local de teste · Sem conexão com a planta' : fonte.remota ? 'Simulador WebSocket · Sem conexão com a planta física' : 'Ambiente de simulação local · Sem conexão com a planta'}</span><span>SMART 4.0 <i />Grupo 2 — IHM / Botões</span></footer>
+      </> : visao === 'LEITURA' ? <LeituraG2 /> : visao === 'COMANDOS' ? <PainelComandos /> : <LeituraQuatroEstacoes />}
+      <footer className="ihm-rodape-pagina"><span><Icone nome="escudo" tamanho={14} />{visao === 'REAL' ? 'Réplica visual sem comunicação com a planta · Comandos desabilitados' : visao === 'PONTE' ? 'Ponte G2 · Somente leitura · Conexão à planta ainda não homologada' : visao === 'LEITURA' ? 'Aquisição G2 · Fonte local de teste · Sem conexão com a planta' : visao === 'COMANDOS' ? 'Comandos G2 · Simulador local · A emergência física prevalece sobre qualquer comando da tela' : fonte.remota ? 'Simulador WebSocket · Sem conexão com a planta física' : 'Ambiente de simulação local · Sem conexão com a planta'}</span><span>SMART 4.0 <i />Grupo 2 — IHM / Botões</span></footer>
     </main>
-  </div>;
+    <BotaoEmergencia />
+  </div></ProvedorComandos>;
 }
