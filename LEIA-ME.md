@@ -37,6 +37,12 @@ Confira as instruções e a função para instalar futuramente no Node-RED em [P
 
 Para checar os testes dessa ponte: `npm.cmd run testar-ponte`.
 
+### Sprint 3 · Comandos e segurança
+
+- Inventário do painel das quatro estações: [INVENTARIO-PAINEL-SPRINT3.md](documentacao/INVENTARIO-PAINEL-SPRINT3.md).
+- **Elementos de segurança que a tela não substitui:** botão de emergência físico (cogumelo), sinalizadores SEGURANÇA OK / ACIONADA e chave seletora Manual/Automático.
+- Botoeira com confirmação pela telemetria: `npm.cmd run simulador-comandos` + `npm.cmd run dev` → **Sprint 3 · Comandos**. Testes: `npm.cmd run testar-comandos`.
+
 ### Ler o Node-RED da bancada (Sprint 3)
 
 `npm.cmd run coletor-n2` consulta, só por GET, a rota `/api/g2/processo/telemetria` do Node-RED da bancada e repassa os 14 sinais do Processo à ponte local, sem alterar o Node-RED. Para testar em casa: `npm.cmd run coletor-n2 -- --simulado`. Passo a passo e leitura dos diagnósticos em [COLETOR-NODERED-G2.md](documentacao/COLETOR-NODERED-G2.md). Testes: `npm.cmd run testar-coletor`.
