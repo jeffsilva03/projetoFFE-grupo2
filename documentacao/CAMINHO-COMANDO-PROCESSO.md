@@ -2,7 +2,11 @@
 
 Varredura feita em **19/11/2026** nos arquivos de fonte da Planta N2 (pasta do professor no Drive, somente leitura): projeto TIA `PROGRAMA_ATUAL_N2/02_Processo_V20`, diagrama elétrico do Processo, pacote do Node-RED da bancada e coleção do MES. Nada foi gravado no CLP, no Node-RED ou no Drive.
 
-## Resposta curta
+## Atualização de 25/11/2026
+
+O professor confirmou que valem, para o CLP do Processo (192.168.150.20), os bits de comando do documento `Grupo1-SPA-Nodered.pdf` (Trilho 3): **START = DB1,X0.4**, **STOP = DB1,X0.5**, **RESET = DB1,X0.6** e **EMERGÊNCIA = DB1,X0.7**. Eles ainda precisam ser validados na bancada com a aba de teste `nodered-teste-comandos-db1-g2.json`, na ordem leitura → STOP → START → RESET, sempre com o professor presente. O restante deste documento continua valendo como referência de I/O e segurança.
+
+## Resposta curta (19/11)
 
 **Hoje o programa do CLP do Processo não tem nenhuma entrada de software que o Node-RED consiga escrever para ligar ou parar a esteira.** Os botões START e STOP do painel são entradas físicas (%I0.7 e %I1.0), e o CLP lê essas entradas direto do cartão a cada ciclo. Por isso o pulso que demos em `botaoVermelho` no dia 18/11 não parou a esteira: aquele bit fica no **DB101, que é o DB do simulador** (`02_SimuladorProcesso`), e não na lógica real.
 

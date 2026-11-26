@@ -1,0 +1,311 @@
+[
+  {
+    "id": "9a2d0e51c7b34f20",
+    "type": "tab",
+    "label": "G2 - Teste Comandos DB1",
+    "disabled": false,
+    "info": "Teste supervisionado dos bits de comando do CLP do Processo (192.168.150.20) indicados pelo professor: DB1,X0.4 START / X0.5 STOP / X0.6 RESET. Endpoint próprio do G2: não altera os nós das outras abas. Os injects só escrevem quando clicados. Apagar a aba ao fim dos testes se o professor pedir."
+  },
+  {
+    "id": "9a2d0e51c7b34f21",
+    "type": "s7 endpoint",
+    "transport": "iso-on-tcp",
+    "address": "192.168.150.20",
+    "port": "102",
+    "rack": "0",
+    "slot": "1",
+    "localtsaphi": "01",
+    "localtsaplo": "00",
+    "remotetsaphi": "01",
+    "remotetsaplo": "00",
+    "connmode": "rack-slot",
+    "adapter": "",
+    "busaddr": "2",
+    "cycletime": "500",
+    "timeout": "5000",
+    "name": "G2 - CLP Processo (teste)",
+    "vartable": [
+      {
+        "addr": "DB1,X0.4",
+        "name": "g2_start"
+      },
+      {
+        "addr": "DB1,X0.5",
+        "name": "g2_stop"
+      },
+      {
+        "addr": "DB1,X0.6",
+        "name": "g2_reset"
+      },
+      {
+        "addr": "DB1,X0.7",
+        "name": "g2_emergencia"
+      },
+      {
+        "addr": "Q0.3",
+        "name": "esteira1_saida"
+      },
+      {
+        "addr": "Q0.4",
+        "name": "esteira2_saida"
+      },
+      {
+        "addr": "I0.7",
+        "name": "botaoVerde_fisico"
+      },
+      {
+        "addr": "I1.0",
+        "name": "botaoVermelho_fisico"
+      },
+      {
+        "addr": "I0.6",
+        "name": "chave_fisica"
+      },
+      {
+        "addr": "DB2,X8.1",
+        "name": "comutadorAutomatico"
+      },
+      {
+        "addr": "DB2,X8.6",
+        "name": "condicaoIniciar"
+      }
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f30",
+    "type": "comment",
+    "z": "9a2d0e51c7b34f20",
+    "name": "1) LEITURA: abra a aba Debug (inseto) e veja os valores. Nada é escrito.",
+    "info": "",
+    "x": 330,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "9a2d0e51c7b34f31",
+    "type": "s7 in",
+    "z": "9a2d0e51c7b34f20",
+    "endpoint": "9a2d0e51c7b34f21",
+    "mode": "all",
+    "variable": "",
+    "diff": true,
+    "name": "G2 - Ler bits de teste",
+    "x": 170,
+    "y": 90,
+    "wires": [
+      [
+        "9a2d0e51c7b34f32"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f32",
+    "type": "debug",
+    "z": "9a2d0e51c7b34f20",
+    "name": "G2 teste - leitura",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 420,
+    "y": 90,
+    "wires": []
+  },
+  {
+    "id": "9a2d0e51c7b34f33",
+    "type": "comment",
+    "z": "9a2d0e51c7b34f20",
+    "name": "2) ESCRITA: só com o professor ao lado. Clique no quadrado à esquerda do inject. Ordem: STOP, START, RESET.",
+    "info": "",
+    "x": 420,
+    "y": 150,
+    "wires": []
+  },
+  {
+    "id": "9a2d0e51c7b34f40",
+    "type": "inject",
+    "z": "9a2d0e51c7b34f20",
+    "name": "G2 - STOP (pulso)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "x": 160,
+    "y": 200,
+    "wires": [
+      [
+        "9a2d0e51c7b34f41"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f41",
+    "type": "trigger",
+    "z": "9a2d0e51c7b34f20",
+    "name": "true → 500 ms → false",
+    "op1": "true",
+    "op2": "false",
+    "op1type": "bool",
+    "op2type": "bool",
+    "duration": "500",
+    "extend": false,
+    "overrideDelay": false,
+    "units": "ms",
+    "reset": "",
+    "bytopic": "all",
+    "topic": "topic",
+    "outputs": 1,
+    "x": 390,
+    "y": 200,
+    "wires": [
+      [
+        "9a2d0e51c7b34f42"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f42",
+    "type": "s7 out",
+    "z": "9a2d0e51c7b34f20",
+    "endpoint": "9a2d0e51c7b34f21",
+    "variable": "g2_stop",
+    "name": "G2 - escrever STOP (DB1,X0.5)",
+    "x": 640,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "9a2d0e51c7b34f43",
+    "type": "inject",
+    "z": "9a2d0e51c7b34f20",
+    "name": "G2 - START (pulso)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "x": 160,
+    "y": 260,
+    "wires": [
+      [
+        "9a2d0e51c7b34f44"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f44",
+    "type": "trigger",
+    "z": "9a2d0e51c7b34f20",
+    "name": "true → 500 ms → false",
+    "op1": "true",
+    "op2": "false",
+    "op1type": "bool",
+    "op2type": "bool",
+    "duration": "500",
+    "extend": false,
+    "overrideDelay": false,
+    "units": "ms",
+    "reset": "",
+    "bytopic": "all",
+    "topic": "topic",
+    "outputs": 1,
+    "x": 390,
+    "y": 260,
+    "wires": [
+      [
+        "9a2d0e51c7b34f45"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f45",
+    "type": "s7 out",
+    "z": "9a2d0e51c7b34f20",
+    "endpoint": "9a2d0e51c7b34f21",
+    "variable": "g2_start",
+    "name": "G2 - escrever START (DB1,X0.4)",
+    "x": 640,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "9a2d0e51c7b34f46",
+    "type": "inject",
+    "z": "9a2d0e51c7b34f20",
+    "name": "G2 - RESET (pulso)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "x": 160,
+    "y": 320,
+    "wires": [
+      [
+        "9a2d0e51c7b34f47"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f47",
+    "type": "trigger",
+    "z": "9a2d0e51c7b34f20",
+    "name": "true → 500 ms → false",
+    "op1": "true",
+    "op2": "false",
+    "op1type": "bool",
+    "op2type": "bool",
+    "duration": "500",
+    "extend": false,
+    "overrideDelay": false,
+    "units": "ms",
+    "reset": "",
+    "bytopic": "all",
+    "topic": "topic",
+    "outputs": 1,
+    "x": 390,
+    "y": 320,
+    "wires": [
+      [
+        "9a2d0e51c7b34f48"
+      ]
+    ]
+  },
+  {
+    "id": "9a2d0e51c7b34f48",
+    "type": "s7 out",
+    "z": "9a2d0e51c7b34f20",
+    "endpoint": "9a2d0e51c7b34f21",
+    "variable": "g2_reset",
+    "name": "G2 - escrever RESET (DB1,X0.6)",
+    "x": 640,
+    "y": 320,
+    "wires": []
+  }
+]
