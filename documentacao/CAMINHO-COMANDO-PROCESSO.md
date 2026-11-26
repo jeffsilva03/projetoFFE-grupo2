@@ -108,6 +108,8 @@ O código Ladder fica gravado em formato binário dentro do projeto, então não
 
 É o que o documento da Sprint 3 pressupõe quando cita endereços do tipo `DB.DBX0.0–0.3` "a confirmar". A mudança é pequena e mantém todas as seguranças.
 
+O procedimento já está descrito na apostila oficial (`Manual_Operacao_N2.pdf`, "Capacitação Smart4.0 2026"), no tutorial **"Comunicação entre CLPs → S7"**, nas **páginas 175 a 180**: habilitar PUT/GET, criar o DB, desmarcar "Optimized block access", anotar os offsets e usar os nós `s7 in`/`s7 out` no Node-RED. Na página 30, o startup confirma que, em operação, é o **botão verde** que liga as esteiras.
+
 **Proposta para levar ao professor:**
 
 1. Criar um DB global de **acesso padrão (não otimizado)**, por exemplo `G2_ComandoRemoto`:
@@ -150,5 +152,7 @@ Sempre com o professor ao lado e um colega com a mão no cogumelo.
 - `PROGRAMA_ATUAL_N2/02_Processo_V20`: tabela de tags, interfaces dos blocos, nomes das redes e lista de DBs (extraídos do arquivo do projeto, sem abrir no TIA).
 - `Diagramas Elétricos/102439_SUB CJ PROCESSO SMART 4.0 - PAINEL ELETRICO MONTADO.pdf`, folhas 2, 3, 4, 6, 8 e 10.
 - `NODERED/NODERED-BKP/package.json`.
+- `Manual_Operacao_N2.pdf` (apostila "Capacitação Smart4.0 2026"), páginas 21, 30 e 175 a 180. O PDF não foi copiado para o repositório porque traz credenciais em texto aberto.
+- `Processo2.zip` (gateway OPC UA de exemplo): só leitura, com tags e endereços fictícios (`DB_ESTADO`, `192.168.0.10`). Não traz endereços da bancada.
 
 **Não foram abertos nem copiados para o repositório:** `Acessos.txt`, `flows_cred.json`, `.config.users.json` (credenciais) e o `.rar` de 3,1 GB.
